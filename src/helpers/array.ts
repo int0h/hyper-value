@@ -1,5 +1,5 @@
 import {HyperValue} from '../core';
-import {$hv, $autoHv, $hc, bind} from './tools';
+import {hvMake, hvAuto, hvCalc, hvBind} from './tools';
 
 type IterationFunc<T, R> = (value: T, index: number) => R | HyperValue<R>;
 type IterationFuncStrict<T, R> = (value: HyperValue<T>, index: number) => R;
@@ -23,7 +23,7 @@ export class HvArray<T> extends HyperValue<HyperValue<T>[]> {
 
     static fromHv<T>(hv: HyperValue<HyperValue<T>[]>): HvArray<T> {
         let hvArray = new HvArray<T>([]);
-        bind(hvArray, [hv], () => hv.g());
+        hvBind(hvArray, [hv], () => hv.g());
         return hvArray;
     }
 
@@ -32,7 +32,7 @@ export class HvArray<T> extends HyperValue<HyperValue<T>[]> {
     }
 
     getLength (): HyperValue<number> {
-        return $autoHv(() => {
+        return hvAuto(() => {
             return this.g().length;
         });
     }
@@ -76,7 +76,7 @@ export class HvArray<T> extends HyperValue<HyperValue<T>[]> {
         if (!(hvArray instanceof HvArray)) {
             hvArray = new HvArray(hvArray);
         }
-        const hv = $hc([hvArray], ([hvArray]) => {
+        const hv = hvCalc([hvArray], ([hvArray]) => {
             return this.g().concat(hvArray.g());
         });
         return HvArray.fromHv(hv);
@@ -84,12 +84,12 @@ export class HvArray<T> extends HyperValue<HyperValue<T>[]> {
 
     slice(start?: number | HyperValue<number>, end?: number | HyperValue<number>): HvArray<T> {
         if (!(start instanceof HyperValue)) {
-            start = $hv(start);
+            start = hvMake(start);
         }
         if (!(end instanceof HyperValue)) {
-            end = $hv(end);
+            end = hvMake(end);
         }
-        const hv = $hc([this, start, end], ([self, start, end]) => {
+        const hv = hvCalc([this, start, end], ([self, start, end]) => {
             return self.g().slice(start.g(), end.g());
         });
         return HvArray.fromHv(hv);
@@ -104,24 +104,24 @@ export class HvArray<T> extends HyperValue<HyperValue<T>[]> {
     }
 
     every(fn: IterationFunc<T, boolean>, thisArg?: any): HyperValue<boolean> {
-        return $autoHv(() => this.g().every(injectGet(fn), thisArg));
+        return hvAuto(() => this.g().every(injectGet(fn), thisArg));
     }
 
     some(fn: IterationFunc<T, boolean>, thisArg?: any): HyperValue<boolean> {
-        return $autoHv(() => this.g().some(injectGet(fn), thisArg));
+        return hvAuto(() => this.g().some(injectGet(fn), thisArg));
     }
 
     filter(fn: IterationFunc<T, boolean>, thisArg?: any): HvArray<T> {
-        const hv = $autoHv(() => this.g().filter(injectGet(fn), thisArg));
+        const hv = hvAuto(() => this.g().filter(injectGet(fn), thisArg));
         return HvArray.fromHv(hv);
     }
 
     map<R>(fn: IterationFunc<T, R>, thisArg?: any): HyperValue<R[]> {
-        return $autoHv(() => this.g().map(injectGet(fn), thisArg));
+        return hvAuto(() => this.g().map(injectGet(fn), thisArg));
     }
 
     reduce(fn: ReduceFunc<T>, initialValue?: any): HyperValue<any> {
-        return $autoHv(() => {
+        return hvAuto(() => {
             return this.g().reduce((acc, curHv, index) => {
                 const val = curHv.g();
                 return fn(acc, val, index);
@@ -130,11 +130,11 @@ export class HvArray<T> extends HyperValue<HyperValue<T>[]> {
     }
 
     find(fn: IterationFunc<T, boolean>, thisArg?: any): HyperValue<T> {
-        return $autoHv(() => this.g().find(injectGet(fn), thisArg).g());
+        return hvAuto(() => this.g().find(injectGet(fn), thisArg).g());
     }
 
     findIndex(fn: IterationFunc<T, boolean>, thisArg?: any): HyperValue<number> {
-        return $autoHv(() => this.g().findIndex(injectGet(fn), thisArg));
+        return hvAuto(() => this.g().findIndex(injectGet(fn), thisArg));
     }
 
 }

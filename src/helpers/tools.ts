@@ -1,11 +1,11 @@
 import {HyperValue, record, Watcher} from '../core';
 import {includes} from '../utils';
 
-export function $hv<T>(value?: T): HyperValue<T> {
+export function hvMake<T>(value?: T): HyperValue<T> {
     return new HyperValue(value);
 }
 
-export function bind<T>(hv: HyperValue<T>, deps: HyperValue<any>[], fn: (params: HyperValue<any>[]) => T) {
+export function hvBind<T>(hv: HyperValue<T>, deps: HyperValue<any>[], fn: (params: HyperValue<any>[]) => T) {
     for (let dep of deps) {
         dep.watch(() => {
             hv.s(fn(deps));
@@ -13,19 +13,19 @@ export function bind<T>(hv: HyperValue<T>, deps: HyperValue<any>[], fn: (params:
     }
 }
 
-export function $hc<T>(deps: HyperValue<any>[], fn: (params: HyperValue<any>[]) => T): HyperValue<T> {
-    const hv = $hv<T>();
+export function hvCalc<T>(deps: HyperValue<any>[], fn: (params: HyperValue<any>[]) => T): HyperValue<T> {
+    const hv = hvMake<T>();
 
-    bind(hv, deps, fn);
+    hvBind(hv, deps, fn);
 
     hv.s(fn(deps));
 
     return hv;
 }
 
-export function $autoHv<T>(fn: () => T): HyperValue<T> {
+export function hvAuto<T>(fn: () => T): HyperValue<T> {
     const [value, deps] = record(fn);
-    const hv = $hv(value);
+    const hv = hvMake(value);
 
     const watcher = () => {
         const [value, newDeps] = record(fn);
@@ -46,5 +46,5 @@ export function $autoHv<T>(fn: () => T): HyperValue<T> {
 }
 
 export function wrapHv<I, O>(hv: HyperValue<I>, fn: (value: I) => O): HyperValue<O> {
-    return $hc([hv], ([hv]) => fn(hv.g()));
+    return hvCalc([hv], ([hv]) => fn(hv.g()));
 }
