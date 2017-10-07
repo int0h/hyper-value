@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "moduleResolution": "node",
+        "module": "commonjs",
+        "inlineSourceMap": true,
+        "typeRoots": [
+            "./node_modules/@types"
+        ],
+        "outDir": "./dist",
+        "declaration": true,
+        "declarationDir": "./types",
+        "lib": [
+            "es5",
+            "es2015.promise"
+        ]
+    },
+    "include": [
+        "./src/index.ts",
+        "./src/tests/**/*.ts"
+    ]
+}
