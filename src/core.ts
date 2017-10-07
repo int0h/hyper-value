@@ -14,10 +14,8 @@ export class HyperValue<T> {
     value: T;
     newValue: T;
     updating = false;
-    deps: HyperValue<T>[];
-    depFn: DepFn<T> = null;
 
-    constructor(initialValue?: T) {
+    constructor(initialValue: T) {
         this.value = initialValue;
     }
 
@@ -65,7 +63,11 @@ function hvRecordStart() {
 
 function hvRecordStop() {
     recordingHv = false;
-    return recordedHv.pop();
+    const newList = recordedHv.pop();
+    if (!newList) {
+        throw new Error('recorder stack error');
+    }
+    return newList;
 }
 
 export function record<T>(fn: () => T): [T, HyperValue<any>[]] {

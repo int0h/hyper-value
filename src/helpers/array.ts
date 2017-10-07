@@ -1,9 +1,9 @@
 import {HyperValue} from '../core';
 import {hvMake, hvAuto, hvCalc, hvBind} from './tools';
 
-type IterationFunc<T, R> = (value: T, index: number) => R | HyperValue<R>;
+export type IterationFunc<T, R> = (value: T, index: number) => R | HyperValue<R>;
 type IterationFuncStrict<T, R> = (value: HyperValue<T>, index: number) => R;
-type ReduceFunc<T> = (acc: any, value: T, index: number) => any;
+export type ReduceFunc<T> = (acc: any, value: T, index: number) => any;
 
 function injectGet<T, R>(fn: IterationFunc<T, R>): IterationFuncStrict<T, R> {
     return function(hv: HyperValue<T>, index) {
@@ -82,7 +82,7 @@ export class HvArray<T> extends HyperValue<HyperValue<T>[]> {
         return HvArray.fromHv(hv);
     }
 
-    slice(start?: number | HyperValue<number>, end?: number | HyperValue<number>): HvArray<T> {
+    slice(start?: number | HyperValue<number | undefined>, end?: number | HyperValue<number | undefined>): HvArray<T> {
         if (!(start instanceof HyperValue)) {
             start = hvMake(start);
         }

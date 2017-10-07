@@ -1,7 +1,7 @@
 import {HyperValue, record, Watcher} from '../core';
 import {includes} from '../utils';
 
-export function hvMake<T>(value?: T): HyperValue<T> {
+export function hvMake<T>(value: T): HyperValue<T> {
     return new HyperValue(value);
 }
 
@@ -14,7 +14,7 @@ export function hvBind<T>(hv: HyperValue<T>, deps: HyperValue<any>[], fn: (param
 }
 
 export function hvCalc<T>(deps: HyperValue<any>[], fn: (params: HyperValue<any>[]) => T): HyperValue<T> {
-    const hv = hvMake<T>();
+    const hv = hvMake<any>(null) as HyperValue<T>;
 
     hvBind(hv, deps, fn);
 
