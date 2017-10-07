@@ -5,10 +5,6 @@ export interface Watcher<T> {
     (newValue: T, oldValue: T): void;
 }
 
-type HvArray<T> = Array<HyperValue<T>>;
-
-type DepFn<T> = (params: HyperValue<any>[]) => T;
-
 export class HyperValue<T> {
     watchers: Watcher<T>[] = [];
     value: T;
@@ -43,14 +39,17 @@ export class HyperValue<T> {
         this.updating = false;
     }
 
-    watch(watcher: Watcher<T>) {
+    watch(watcher: Watcher<T>): number {
         this.watchers.push(watcher);
+        return this.watchers.length - 1;
     }
 
-    unwatch(watcher: Watcher<T>) {
-        let index = this.watchers.indexOf(watcher);
-        if (index === -1) {
-            return;
+    unwatch(watcher: Watcher<T> | number) {
+        const index = typeof watcher === 'function'
+            ? this.watchers.indexOf(watcher)
+            : watcher;
+        if (!(index >= 0 && index < this.watchers.length)) {
+            throw new Error(`Invalid watcher id: ${watcher}`);
         }
         this.watchers.splice(index, 1);
     }
@@ -64,14 +63,11 @@ function hvRecordStart() {
 function hvRecordStop() {
     recordingHv = false;
     const newList = recordedHv.pop();
-    if (!newList) {
-        throw new Error('recorder stack error');
-    }
     return newList;
 }
 
 export function record<T>(fn: () => T): [T, HyperValue<any>[]] {
     hvRecordStart();
     const result = fn();
-    return [result, hvRecordStop()];
+    return [result, hvRecordStop() as HyperValue<any>[]];
 }

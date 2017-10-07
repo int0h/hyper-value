@@ -1,5 +1,5 @@
 import {HyperValue} from '../core';
-import {hvMake, hvAuto, hvCalc, hvBind} from './tools';
+import {hvMake, hvAuto, hvEval, hvBind} from './tools';
 
 export type IterationFunc<T, R> = (value: T, index: number) => R | HyperValue<R>;
 type IterationFuncStrict<T, R> = (value: HyperValue<T>, index: number) => R;
@@ -25,10 +25,6 @@ export class HvArray<T> extends HyperValue<HyperValue<T>[]> {
         let hvArray = new HvArray<T>([]);
         hvBind(hvArray, [hv], () => hv.g());
         return hvArray;
-    }
-
-    private getItems(): T[] {
-        return this.g().map(item => item.g());
     }
 
     getLength (): HyperValue<number> {
@@ -76,7 +72,7 @@ export class HvArray<T> extends HyperValue<HyperValue<T>[]> {
         if (!(hvArray instanceof HvArray)) {
             hvArray = new HvArray(hvArray);
         }
-        const hv = hvCalc([hvArray], ([hvArray]) => {
+        const hv = hvEval([hvArray], ([hvArray]) => {
             return this.g().concat(hvArray.g());
         });
         return HvArray.fromHv(hv);
@@ -89,19 +85,13 @@ export class HvArray<T> extends HyperValue<HyperValue<T>[]> {
         if (!(end instanceof HyperValue)) {
             end = hvMake(end);
         }
-        const hv = hvCalc([this, start, end], ([self, start, end]) => {
+        const hv = hvEval([this, start, end], ([self, start, end]) => {
             return self.g().slice(start.g(), end.g());
         });
         return HvArray.fromHv(hv);
     }
 
     // iterators:
-
-    private applyIteratorMethod<R>(name: string, fn: IterationFunc<T, R>, thisArg?: any): any {
-        let listCopy = this.g();
-        const result = (listCopy as any)[name].call(listCopy, fn, thisArg);
-        return result;
-    }
 
     every(fn: IterationFunc<T, boolean>, thisArg?: any): HyperValue<boolean> {
         return hvAuto(() => this.g().every(injectGet(fn), thisArg));
@@ -129,12 +119,12 @@ export class HvArray<T> extends HyperValue<HyperValue<T>[]> {
         });
     }
 
-    find(fn: IterationFunc<T, boolean>, thisArg?: any): HyperValue<T> {
-        return hvAuto(() => this.g().find(injectGet(fn), thisArg).g());
-    }
+    // find(fn: IterationFunc<T, boolean>, thisArg?: any): HyperValue<T> {
+    //     return hvAuto(() => this.g().find(injectGet(fn), thisArg).g());
+    // }
 
-    findIndex(fn: IterationFunc<T, boolean>, thisArg?: any): HyperValue<number> {
-        return hvAuto(() => this.g().findIndex(injectGet(fn), thisArg));
-    }
+    // findIndex(fn: IterationFunc<T, boolean>, thisArg?: any): HyperValue<number> {
+    //     return hvAuto(() => this.g().findIndex(injectGet(fn), thisArg));
+    // }
 
 }

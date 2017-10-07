@@ -13,7 +13,7 @@ export function hvBind<T>(hv: HyperValue<T>, deps: HyperValue<any>[], fn: (param
     }
 }
 
-export function hvCalc<T>(deps: HyperValue<any>[], fn: (params: HyperValue<any>[]) => T): HyperValue<T> {
+export function hvEval<T>(deps: HyperValue<any>[], fn: (params: HyperValue<any>[]) => T): HyperValue<T> {
     const hv = hvMake<any>(null) as HyperValue<T>;
 
     hvBind(hv, deps, fn);
@@ -46,5 +46,5 @@ export function hvAuto<T>(fn: () => T): HyperValue<T> {
 }
 
 export function wrapHv<I, O>(hv: HyperValue<I>, fn: (value: I) => O): HyperValue<O> {
-    return hvCalc([hv], ([hv]) => fn(hv.g()));
+    return hvEval([hv], ([hv]) => fn(hv.g()));
 }

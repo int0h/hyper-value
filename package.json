@@ -17,7 +17,7 @@
   "keywords": [],
   "typings": "./types/",
   "scripts": {
-    "test": "node_modules/.bin/nyc node_modules/.bin/ava -v ./dist/tests"
+    "test": "node_modules/.bin/nyc node_modules/.bin/ava -v ./dist/tests/**"
   },
   "dependencies": {
   }
