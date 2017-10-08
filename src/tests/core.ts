@@ -47,6 +47,31 @@ test('throws on attempt of deleting non existing watcher', t => {
     });
 });
 
+test('throws on attempt of adding a watcher twice', t => {
+    const hv = new HyperValue(0);
+    const watcher = () => t.fail();
+    t.throws(() => {
+        hv.watch(watcher);
+        hv.watch(watcher);
+    });
+});
+
+test('allows adding a watcher twice by explicit option', t => {
+    const hv = new HyperValue(0);
+    const watcher = () => t.fail();
+    t.notThrows(() => {
+        hv.watch(watcher, true);
+        hv.watch(watcher, true);
+    });
+});
+
+test('allows adding a watcher twice by explicit option', t => {
+    const hv = new HyperValue(0);
+    const watcher = () => t.fail();
+    const id = hv.watch(watcher, true);
+    t.is(id, hv.findWatcher(watcher));
+});
+
 test('record basics', t => {
     const hv = new HyperValue(0);
 

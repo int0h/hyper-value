@@ -6,10 +6,10 @@ export interface Watcher<T> {
 }
 
 export class HyperValue<T> {
-    watchers: Watcher<T>[] = [];
-    value: T;
-    newValue: T;
-    updating = false;
+    private watchers: Watcher<T>[] = [];
+    private value: T;
+    private newValue: T;
+    private updating = false;
 
     constructor(initialValue: T) {
         this.value = initialValue;
@@ -39,9 +39,19 @@ export class HyperValue<T> {
         this.updating = false;
     }
 
-    watch(watcher: Watcher<T>): number {
+    watch(watcher: Watcher<T>, ignoreDoubles?: boolean): number {
+        let id = this.findWatcher(watcher);
+
+        if (id !== -1) {
+            if (ignoreDoubles) {
+                return id;
+            }
+            throw new Error('Cannot add existing watcher');
+        }
+
+        id = this.watchers.length;
         this.watchers.push(watcher);
-        return this.watchers.length - 1;
+        return id;
     }
 
     unwatch(watcher: Watcher<T> | number) {
@@ -52,6 +62,10 @@ export class HyperValue<T> {
             throw new Error(`Invalid watcher id: ${watcher}`);
         }
         this.watchers.splice(index, 1);
+    }
+
+    findWatcher(watcher: Watcher<T>): number {
+        return this.watchers.indexOf(watcher);
     }
 }
 

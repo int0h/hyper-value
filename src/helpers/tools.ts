@@ -1,5 +1,4 @@
-import {HyperValue, record, Watcher} from '../core';
-import {includes} from '../utils';
+import {HyperValue, record} from '../core';
 
 export function hvMake<T>(value: T): HyperValue<T> {
     return new HyperValue(value);
@@ -29,12 +28,11 @@ export function hvAuto<T>(fn: () => T): HyperValue<T> {
 
     const watcher = () => {
         const [value, newDeps] = record(fn);
-        const newDepsClean = newDeps.filter(newDep => {
-            return !includes(deps, newDep);
-        });
+
         for (let dep of newDeps) {
-            dep.watch(watcher);
+            dep.watch(watcher, true);
         }
+
         hv.s(value);
     };
 
