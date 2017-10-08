@@ -1,6 +1,6 @@
 import test from 'ava';
 import {HyperValue} from '../core';
-import {hvAuto, hvBind, hvEval, hvMake, wrapHv} from '../helpers/tools';
+import {hvAuto, hvBind, hvEval, hvMake, hvWrap} from '../helpers/tools';
 
 test('instance created', t => {
     const hv = hvMake(0);
@@ -30,7 +30,7 @@ test('basic bind', t => {
 
 test('basic wrap', t => {
     const a = hvMake(5);
-    const twice = wrapHv(a, n => n * 2);
+    const twice = hvWrap(a, n => n * 2);
     t.is(twice.g(), 10);
     a.s(3);
     t.is(twice.g(), 6);
