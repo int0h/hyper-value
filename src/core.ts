@@ -1,12 +1,11 @@
 let recordedHv: HyperValue<any>[][] = [];
-let recordingHv = false;
 
 export interface Watcher<T> {
     (newValue: T, oldValue: T): void;
 }
 
 export class HyperValue<T> {
-    private watchers: Watcher<T>[] = [];
+    private watchers: (Watcher<T> | null)[] = [];
     private value: T;
     private newValue: T;
     private updating = false;
@@ -16,9 +15,8 @@ export class HyperValue<T> {
     }
 
     g(silent?: boolean): T {
-        if (recordingHv && !silent) {
-            const currentList = recordedHv[recordedHv.length - 1];
-            currentList.push(this);
+        if (!silent) {
+            addToRecords(this);
         }
         if (this.updating) {
             return this.newValue;
@@ -31,53 +29,67 @@ export class HyperValue<T> {
             return;
         }
         this.updating = true;
+
         this.newValue = newValue;
-        for (let watcher of this.watchers) {
+
+        this.watchers = this.watchers.filter(watcher => {
+            return watcher !== null;
+        });
+
+        const cleanWatchers = [...this.watchers] as Watcher<T>[];
+
+        for (let watcher of cleanWatchers) {
             watcher(newValue, this.value);
         }
+
         this.value = newValue;
+
         this.updating = false;
     }
 
-    watch(watcher: Watcher<T>, ignoreDoubles?: boolean): number {
-        let id = this.findWatcher(watcher);
+    watch(watcher: Watcher<T>, ignoreDoubles?: boolean) {
+        let found = this.hasWatcher(watcher);
 
-        if (id !== -1) {
+        if (found) {
             if (ignoreDoubles) {
-                return id;
+                return;
             }
             throw new Error('Cannot add existing watcher');
         }
 
-        id = this.watchers.length;
         this.watchers.push(watcher);
-        return id;
     }
 
-    unwatch(watcher: Watcher<T> | number) {
-        const index = typeof watcher === 'function'
-            ? this.watchers.indexOf(watcher)
-            : watcher;
+    unwatch(watcher: Watcher<T>) {
+        const index = this.watchers.indexOf(watcher);
+
         if (!(index >= 0 && index < this.watchers.length)) {
             throw new Error(`Invalid watcher id: ${watcher}`);
         }
-        this.watchers.splice(index, 1);
+
+        this.watchers[index] = null;
     }
 
-    findWatcher(watcher: Watcher<T>): number {
-        return this.watchers.indexOf(watcher);
+    hasWatcher(watcher: Watcher<T>): boolean {
+        return this.watchers.indexOf(watcher) !== -1;
     }
 }
 
 function hvRecordStart() {
     recordedHv.push([]);
-    recordingHv = true;
 }
 
 function hvRecordStop() {
-    recordingHv = false;
     const newList = recordedHv.pop();
     return newList;
+}
+
+function addToRecords(hv: HyperValue<any>) {
+    if (recordedHv.length <= 0) {
+        return;
+    }
+    const currentList = recordedHv[recordedHv.length - 1];
+    currentList.push(hv);
 }
 
 export function record<T>(fn: () => T): [T, HyperValue<any>[]] {

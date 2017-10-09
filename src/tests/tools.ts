@@ -1,6 +1,6 @@
 import test from 'ava';
 import {HyperValue} from '../core';
-import {hvAuto, hvBind, hvEval, hvMake, hvWrap} from '../helpers/tools';
+import {hvAuto, hvBind, hvEval, hvMake, hvWrap, hvWhatchOnce} from '../helpers/tools';
 
 test('instance created', t => {
     const hv = hvMake(0);
@@ -43,4 +43,64 @@ test('basic auto', t => {
     t.is(sum.g(), 10);
     a.s(3);
     t.is(sum.g(), 8);
+});
+
+test('auto multiple call', t => {
+    const a = hvMake(0);
+    const exp = hvAuto(() => a.g());
+    t.is(exp.g(), 0);
+    a.s(1);
+    t.is(exp.g(), 1);
+    a.s(2);
+    t.is(exp.g(), 2);
+    a.s(3);
+    t.is(exp.g(), 3);
+});
+
+test('auto multiple deps', t => {
+    const a = hvMake(1);
+    const b = hvMake(2);
+    const exp = hvAuto(() => a.g() || b.g());
+    t.is(exp.g(), 1);
+    a.s(0);
+    t.is(exp.g(), 2);
+    a.s(3);
+    t.is(exp.g(), 3);
+});
+
+test('nested auto and get', t => {
+    const a = hvMake(0);
+    const b = hvMake(0);
+    const exp = hvAuto(() => hvAuto(() => a.g()).g() + b.g());
+    t.is(exp.g(), 0);
+    a.s(1);
+    t.is(exp.g(), 1);
+    b.s(2);
+    t.is(exp.g(), 3);
+});
+
+test('multi auto with the same dep', t => {
+    const v = hvMake(0);
+    const a1 = hvAuto(() => v.g());
+    const a2 = hvAuto(() => v.g());
+    t.is(a1.g(), 0);
+    t.is(a2.g(), 0);
+    v.s(1);
+    t.is(a1.g(), 1);
+    t.is(a2.g(), 1);
+    v.s(2);
+    t.is(a1.g(), 2);
+    t.is(a2.g(), 2);
+});
+
+test('watchOnce fired only once', t => {
+    const a = hvMake(5);
+    hvWhatchOnce(a, val => {
+        if (val === 1) {
+            t.fail();
+        }
+    });
+    a.s(0);
+    a.s(1);
+    t.pass();
 });

@@ -25,8 +25,9 @@ test('watcher gets values', t => {
 
 test('hv can be unwatched', t => {
     const hv = new HyperValue(0);
-    const id = hv.watch(() => t.fail());
-    hv.unwatch(id);
+    const watcher = () => t.fail();
+    hv.watch(watcher);
+    hv.unwatch(watcher);
     hv.s(1);
     t.pass();
 });
@@ -43,7 +44,7 @@ test('hv can be unwatched by watcher function', t => {
 test('throws on attempt of deleting non existing watcher', t => {
     const hv = new HyperValue(0);
     t.throws(() => {
-        hv.unwatch(0);
+        hv.unwatch(() => {});
     });
 });
 
@@ -68,8 +69,9 @@ test('allows adding a watcher twice by explicit option', t => {
 test('allows adding a watcher twice by explicit option', t => {
     const hv = new HyperValue(0);
     const watcher = () => t.fail();
-    const id = hv.watch(watcher, true);
-    t.is(id, hv.findWatcher(watcher));
+    hv.watch(watcher, true);
+    hv.watch(watcher, true);
+    t.true(hv.hasWatcher(watcher));
 });
 
 test('record basics', t => {

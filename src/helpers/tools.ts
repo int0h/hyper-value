@@ -1,4 +1,4 @@
-import {HyperValue, record} from '../core';
+import {HyperValue, record, Watcher} from '../core';
 
 export function hvMake<T>(value: T): HyperValue<T> {
     return new HyperValue(value);
@@ -29,15 +29,15 @@ export function hvAuto<T>(fn: () => T): HyperValue<T> {
     const watcher = () => {
         const [value, newDeps] = record(fn);
 
-        for (let dep of newDeps) {
-            dep.watch(watcher, true);
-        }
-
         hv.s(value);
+
+        for (let dep of newDeps) {
+            hvWhatchOnce(dep, watcher);
+        }
     };
 
     for (let dep of deps) {
-        dep.watch(watcher);
+        hvWhatchOnce(dep, watcher);
     }
 
     return hv;
@@ -45,4 +45,12 @@ export function hvAuto<T>(fn: () => T): HyperValue<T> {
 
 export function hvWrap<I, O>(hv: HyperValue<I>, fn: (value: I) => O): HyperValue<O> {
     return hvEval([hv], ([hv]) => fn(hv.g()));
+}
+
+export function hvWhatchOnce<T>(hv: HyperValue<T>, watcher: Watcher<T>, ignoreDoubles?: boolean) {
+    const innerWatcher = (newValue: T, oldValue: T) => {
+        hv.unwatch(innerWatcher);
+        watcher(newValue, oldValue);
+    };
+    hv.watch(innerWatcher, ignoreDoubles);
 }
