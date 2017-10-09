@@ -105,7 +105,7 @@ test('watchOnce fired only once', t => {
     t.pass();
 });
 
-test('auto watchers limit', t => {
+test('auto watchers limit same deps', t => {
     const a = hvMake(0);
 
     hvAuto(() => {
@@ -121,6 +121,30 @@ test('auto watchers limit', t => {
 
     for (let i = 0; i < 10; i++) {
         a.s(i);
+    }
+
+    t.pass();
+});
+
+test('auto watchers limit different deps', t => {
+    const a = hvMake(0);
+    const b = hvMake(0);
+
+    hvAuto(() => {
+        return a.g() + b.g();
+    });
+
+    a.watch(() => {
+        const lenA = (a as any).watchers.length;
+        const lenB = (b as any).watchers.length;
+        if (lenA > 10 || lenB > 10) {
+            t.fail();
+        }
+    });
+
+    for (let i = 0; i < 5; i++) {
+        a.s(i);
+        b.s(i);
     }
 
     t.pass();
