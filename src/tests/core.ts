@@ -26,53 +26,53 @@ test('watcher gets values', t => {
 test('hv can be unwatched', t => {
     const hv = new HyperValue(0);
     const watcher = () => t.fail();
-    hv.watch(watcher);
-    hv.unwatch(watcher);
+    const id = hv.watch(watcher);
+    hv.unwatch(id);
     hv.s(1);
     t.pass();
 });
 
-test('hv can be unwatched by watcher function', t => {
-    const hv = new HyperValue(0);
-    const watcher = () => t.fail();
-    hv.watch(watcher);
-    hv.unwatch(watcher);
-    hv.s(1);
-    t.pass();
-});
+// test('hv can be unwatched by watcher function', t => {
+//     const hv = new HyperValue(0);
+//     const watcher = () => t.fail();
+//     hv.watch(watcher);
+//     hv.unwatch(watcher);
+//     hv.s(1);
+//     t.pass();
+// });
 
-test('throws on attempt of deleting non existing watcher', t => {
-    const hv = new HyperValue(0);
-    t.throws(() => {
-        hv.unwatch(() => {});
-    });
-});
+// test('throws on attempt of deleting non existing watcher', t => {
+//     const hv = new HyperValue(0);
+//     t.throws(() => {
+//         hv.unwatch(() => {});
+//     });
+// });
 
-test('throws on attempt of adding a watcher twice', t => {
-    const hv = new HyperValue(0);
-    const watcher = () => t.fail();
-    t.throws(() => {
-        hv.watch(watcher);
-        hv.watch(watcher);
-    });
-});
+// test('throws on attempt of adding a watcher twice', t => {
+//     const hv = new HyperValue(0);
+//     const watcher = () => t.fail();
+//     t.throws(() => {
+//         hv.watch(watcher);
+//         hv.watch(watcher);
+//     });
+// });
 
-test('allows adding a watcher twice by explicit option', t => {
-    const hv = new HyperValue(0);
-    const watcher = () => t.fail();
-    t.notThrows(() => {
-        hv.watch(watcher, true);
-        hv.watch(watcher, true);
-    });
-});
+// test('allows adding a watcher twice by explicit option', t => {
+//     const hv = new HyperValue(0);
+//     const watcher = () => t.fail();
+//     t.notThrows(() => {
+//         hv.watch(watcher, true);
+//         hv.watch(watcher, true);
+//     });
+// });
 
-test('allows adding a watcher twice by explicit option', t => {
-    const hv = new HyperValue(0);
-    const watcher = () => t.fail();
-    hv.watch(watcher, true);
-    hv.watch(watcher, true);
-    t.true(hv.hasWatcher(watcher));
-});
+// test('allows adding a watcher twice by explicit option', t => {
+//     const hv = new HyperValue(0);
+//     const watcher = () => t.fail();
+//     hv.watch(watcher, true);
+//     hv.watch(watcher, true);
+//     t.true(hv.hasWatcher(watcher));
+// });
 
 test('record basics', t => {
     const hv = new HyperValue(0);

@@ -1,6 +1,6 @@
 import test from 'ava';
 import {HyperValue} from '../core';
-import {hvAuto, hvBind, hvEval, hvMake, hvWrap, hvWhatchOnce} from '../helpers/tools';
+import {hvAuto, hvBind, hvEval, hvMake, hvWrap} from '../helpers/tools';
 
 test('instance created', t => {
     const hv = hvMake(0);
@@ -95,11 +95,11 @@ test('multi auto with the same dep', t => {
 
 test('watchOnce fired only once', t => {
     const a = hvMake(5);
-    hvWhatchOnce(a, val => {
+    a.watch(val => {
         if (val === 1) {
             t.fail();
         }
-    });
+    }, true);
     a.s(0);
     a.s(1);
     t.pass();

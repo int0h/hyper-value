@@ -1,14 +1,23 @@
 let recordedHv: HyperValue<any>[][] = [];
 
-export interface Watcher<T> {
+export interface WatcherFn<T> {
     (newValue: T, oldValue: T): void;
 }
+type Watcher<T> = {
+    fn: (newValue: T, oldValue: T) => void;
+    id: WatcherId;
+    once: boolean;
+};
+
+export type WatcherId = number;
 
 export class HyperValue<T> {
-    private watchers: (Watcher<T> | null)[] = [];
+    private watchers: Watcher<T>[] = [];
+    private watchersToDelete: WatcherId[] = [];
     private value: T;
     private newValue: T;
     private updating = false;
+    private currentWatcherId = 0;
 
     constructor(initialValue: T) {
         this.value = initialValue;
@@ -28,18 +37,15 @@ export class HyperValue<T> {
         if (this.updating) {
             return;
         }
+
         this.updating = true;
 
         this.newValue = newValue;
 
-        this.watchers = this.watchers.filter(watcher => {
-            return watcher !== null;
-        });
+        const runList = this.prepareWatchers();
 
-        const cleanWatchers = [...this.watchers] as Watcher<T>[];
-
-        for (let watcher of cleanWatchers) {
-            watcher(newValue, this.value);
+        for (let fn of runList) {
+            fn(newValue, this.value);
         }
 
         this.value = newValue;
@@ -47,31 +53,36 @@ export class HyperValue<T> {
         this.updating = false;
     }
 
-    watch(watcher: Watcher<T>, ignoreDoubles?: boolean) {
-        let found = this.hasWatcher(watcher);
+    private prepareWatchers(): WatcherFn<T>[] {
+        let toRun: WatcherFn<T>[] = [];
+        let newWatchers: Watcher<T>[] = [];
 
-        if (found) {
-            if (ignoreDoubles) {
-                return;
+        for (let watcher of this.watchers) {
+            if (this.watchersToDelete.indexOf(watcher.id) !== -1) {
+                continue;
             }
-            throw new Error('Cannot add existing watcher');
+            if (!watcher.once) {
+                newWatchers.push(watcher);
+            }
+            toRun.push(watcher.fn);
         }
 
+        this.watchers = newWatchers;
+        this.watchersToDelete = [];
+
+        return toRun;
+    }
+
+    watch(fn: WatcherFn<T>, once: boolean = false): WatcherId {
+        const id = this.currentWatcherId;
+        this.currentWatcherId++;
+        const watcher = {fn, id, once};
         this.watchers.push(watcher);
+        return id;
     }
 
-    unwatch(watcher: Watcher<T>) {
-        const index = this.watchers.indexOf(watcher);
-
-        if (!(index >= 0 && index < this.watchers.length)) {
-            throw new Error(`Invalid watcher id: ${watcher}`);
-        }
-
-        this.watchers[index] = null;
-    }
-
-    hasWatcher(watcher: Watcher<T>): boolean {
-        return this.watchers.indexOf(watcher) !== -1;
+    unwatch(id: WatcherId) {
+        this.watchersToDelete.push(id);
     }
 }
 
