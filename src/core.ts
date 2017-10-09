@@ -1,4 +1,4 @@
-let recordedHv: HyperValue<any>[][] = [];
+let recordedHvStack: HyperValue<any>[][] = [];
 
 export interface WatcherFn<T> {
     (newValue: T, oldValue: T): void;
@@ -87,20 +87,22 @@ export class HyperValue<T> {
 }
 
 function hvRecordStart() {
-    recordedHv.push([]);
+    recordedHvStack.push([]);
 }
 
 function hvRecordStop() {
-    const newList = recordedHv.pop();
+    const newList = recordedHvStack.pop();
     return newList;
 }
 
 function addToRecords(hv: HyperValue<any>) {
-    if (recordedHv.length <= 0) {
+    if (recordedHvStack.length <= 0) {
         return;
     }
-    const currentList = recordedHv[recordedHv.length - 1];
-    currentList.push(hv);
+    const currentList = recordedHvStack[recordedHvStack.length - 1];
+    if (currentList.indexOf(hv) === -1) {
+        currentList.push(hv);
+    }
 }
 
 export function record<T>(fn: () => T): [T, HyperValue<any>[]] {

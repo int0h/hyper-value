@@ -104,3 +104,24 @@ test('watchOnce fired only once', t => {
     a.s(1);
     t.pass();
 });
+
+test('auto watchers limit', t => {
+    const a = hvMake(0);
+
+    hvAuto(() => {
+        return a.g() + a.g();
+    });
+
+    a.watch(() => {
+        const len = (a as any).watchers.length;
+        if (len > 10) {
+            t.fail();
+        }
+    });
+
+    for (let i = 0; i < 10; i++) {
+        a.s(i);
+    }
+
+    t.pass();
+});
