@@ -42,6 +42,14 @@ export function hvWrap<I, O>(hv: HyperValue<I>, fn: (value: I) => O): HyperValue
     return hvEval([hv], ([hv]) => fn(hv.g()));
 }
 
+export function hvCast<T>(rawValue: T | HyperValue<T>): HyperValue<T> {
+    if (rawValue instanceof HyperValue) {
+        return rawValue;
+    }
+
+    return hvMake(rawValue);
+}
+
 export function hvOnceOf(hvs: HyperValue<any>[], watcher: WatcherFn<any>) {
     const commonWatcher = (newValue: any, oldValue: any) => {
         for (let [hv, id] of links) {
