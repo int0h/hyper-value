@@ -39,7 +39,7 @@ export function hvAuto<T>(fn: () => T): HyperValue<T> {
 }
 
 export function hvWrap<I, O>(hv: HyperValue<I>, fn: (value: I) => O): HyperValue<O> {
-    return hvEval([hv], ([hv]) => fn(hv.g()));
+    return hvAuto(() => fn(hv.g()));
 }
 
 export function hvCast<T>(rawValue: T | HyperValue<T>): HyperValue<T> {

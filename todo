@@ -1,0 +1,5 @@
+- reconsider hvEval
+- add hvAsync
+    - write tests!
+- add hvNormalize/hvGet (hv<T> | T) => T
+- hvIn / hvOut
