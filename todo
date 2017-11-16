@@ -3,3 +3,5 @@
     - write tests!
 - add hvNormalize/hvGet (hv<T> | T) => T
 - hvIn / hvOut
+- catch
+- hv helper

@@ -1,10 +1,12 @@
-import test from 'ava';
+import test = require('tape');
+
 import {HyperValue} from '../core';
 import {hvAuto, hvBind, hvEval, hvMake, hvWrap} from '../helpers/tools';
 
 test('instance created', t => {
     const hv = hvMake(0);
     t.true(hv instanceof HyperValue);
+    t.end();
 });
 
 test('basic bind', t => {
@@ -15,6 +17,7 @@ test('basic bind', t => {
     });
     hv2.s(2);
     t.is(hv.g(), 3);
+    t.end();
 });
 
 test('basic bind', t => {
@@ -26,6 +29,7 @@ test('basic bind', t => {
     t.is(sum.g(), 10);
     a.s(10);
     t.is(sum.g(), 15);
+    t.end();
 });
 
 test('basic wrap', t => {
@@ -34,6 +38,7 @@ test('basic wrap', t => {
     t.is(twice.g(), 10);
     a.s(3);
     t.is(twice.g(), 6);
+    t.end();
 });
 
 test('basic auto', t => {
@@ -43,6 +48,7 @@ test('basic auto', t => {
     t.is(sum.g(), 10);
     a.s(3);
     t.is(sum.g(), 8);
+    t.end();
 });
 
 test('auto multiple call', t => {
@@ -55,6 +61,7 @@ test('auto multiple call', t => {
     t.is(exp.g(), 2);
     a.s(3);
     t.is(exp.g(), 3);
+    t.end();
 });
 
 test('auto multiple deps', t => {
@@ -66,6 +73,7 @@ test('auto multiple deps', t => {
     t.is(exp.g(), 2);
     a.s(3);
     t.is(exp.g(), 3);
+    t.end();
 });
 
 test('nested auto and get', t => {
@@ -77,6 +85,7 @@ test('nested auto and get', t => {
     t.is(exp.g(), 1);
     b.s(2);
     t.is(exp.g(), 3);
+    t.end();
 });
 
 test('multi auto with the same dep', t => {
@@ -91,6 +100,7 @@ test('multi auto with the same dep', t => {
     v.s(2);
     t.is(a1.g(), 2);
     t.is(a2.g(), 2);
+    t.end();
 });
 
 test('watchOnce fired only once', t => {
@@ -103,6 +113,7 @@ test('watchOnce fired only once', t => {
     a.s(0);
     a.s(1);
     t.pass();
+    t.end();
 });
 
 test('auto watchers limit same deps', t => {
@@ -124,6 +135,7 @@ test('auto watchers limit same deps', t => {
     }
 
     t.pass();
+    t.end();
 });
 
 test('auto watchers limit different deps', t => {
@@ -148,4 +160,5 @@ test('auto watchers limit different deps', t => {
     }
 
     t.pass();
+    t.end();
 });

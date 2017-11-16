@@ -8,16 +8,18 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^8.0.19",
-    "ava": "^0.21.0",
+    "@types/tape": "^4.2.31",
     "coveralls": "^2.13.1",
     "nyc": "^11.1.0",
     "tslint": "^5.7.0",
-    "typescript": "^2.5.3"
+    "typescript": "^2.5.3",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.8.0"
   },
   "keywords": [],
   "typings": "./types/",
   "scripts": {
-    "test": "node_modules/.bin/nyc node_modules/.bin/ava -v ./dist/tests/**"
+    "test": "node_modules/.bin/nyc ./node_modules/.bin/tape ./dist/tests/**/*.js | ./node_modules/.bin/tap-spec"
   },
   "dependencies": {
   }

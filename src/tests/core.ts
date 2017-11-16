@@ -1,15 +1,17 @@
-import test from 'ava';
+import test = require('tape');
 import {HyperValue, record} from '../core';
 
 test('instance created', t => {
     const hv = new HyperValue(0);
     t.true(hv instanceof HyperValue);
+    t.end();
 });
 
 test('watcher works', t => {
     const hv = new HyperValue(0);
     hv.watch(() => {
         t.pass();
+        t.end();
     });
     hv.s(1);
 });
@@ -19,6 +21,7 @@ test('watcher gets values', t => {
     hv.watch((newValue, oldValue) => {
         t.is(newValue, 1);
         t.is(oldValue, 0);
+        t.end();
     });
     hv.s(1);
 });
@@ -30,6 +33,7 @@ test('hv can be unwatched', t => {
     hv.unwatch(id);
     hv.s(1);
     t.pass();
+    t.end();
 });
 
 // test('hv can be unwatched by watcher function', t => {
@@ -83,6 +87,7 @@ test('record basics', t => {
 
     t.is(value, 0);
     t.deepEqual(deps, [hv]);
+    t.end();
 });
 
 test('record and silent get', t => {
@@ -94,6 +99,7 @@ test('record and silent get', t => {
 
     t.is(value, 0);
     t.deepEqual(deps, []);
+    t.end();
 });
 
 
@@ -107,4 +113,5 @@ test('ignore cycle links', t => {
     hv.s(1);
 
     t.is(hv.g(), 1);
+    t.end();
 });
