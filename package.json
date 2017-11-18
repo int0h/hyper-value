@@ -22,5 +22,11 @@
     "test": "node_modules/.bin/nyc ./node_modules/.bin/tape ./dist/tests/**/*.js | ./node_modules/.bin/tap-spec"
   },
   "dependencies": {
+  },
+  "nyc": {
+      "exclude": [
+          "**/src/tests/*.*",
+          "**/dist/tests/*.*"
+      ]
   }
 }

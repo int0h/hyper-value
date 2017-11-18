@@ -90,9 +90,9 @@ function hvRecordStart() {
     recordedHvStack.push([]);
 }
 
-function hvRecordStop() {
+function hvRecordStop(): HyperValue<any>[] {
     const newList = recordedHvStack.pop();
-    return newList;
+    return newList as HyperValue<any>[];
 }
 
 function addToRecords(hv: HyperValue<any>) {
@@ -108,5 +108,32 @@ function addToRecords(hv: HyperValue<any>) {
 export function record<T>(fn: () => T): [T, HyperValue<any>[]] {
     hvRecordStart();
     const result = fn();
-    return [result, hvRecordStop() as HyperValue<any>[]];
+    return [result, hvRecordStop()];
+}
+
+export interface PromiseWrapper<T> {
+    (p: Promise<T>): Promise<T>;
+}
+
+export function recordAsync<T>(fn: (w: PromiseWrapper<T>) => Promise<T>): Promise<[T, HyperValue<any>[]]> {
+    return new Promise((resolve) => {
+        let deps = [] as HyperValue<any>[];
+
+        function w<T>(p: Promise<T>): Promise<T> {
+            return new Promise((resolve) => {
+                deps.push(...hvRecordStop());
+                p.then(value => {
+                    hvRecordStart();
+                    resolve(value);
+                });
+            });
+        }
+
+        hvRecordStart();
+        fn(w).then(value => {
+            const finalDeps = [...deps, ...hvRecordStop()];
+            resolve([value, finalDeps]);
+        });
+
+    });
 }

@@ -1,16 +1,15 @@
 {
     "version": "0.2.0",
     "configurations": [
+
         {
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}/src/temp/t.ts",
-            "sourceMaps": true,
+            "program": "${file}",
             "outFiles": [
-                "${workspaceRoot}/dist/temp/t.js"
+                "${workspaceFolder}/dist/**/*.js"
             ]
         }
-    ],
-    "compounds": []
+    ]
 }
