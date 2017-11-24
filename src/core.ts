@@ -3,6 +3,7 @@ let recordedHvStack: HyperValue<any>[][] = [];
 export interface WatcherFn<T> {
     (newValue: T, oldValue: T): void;
 }
+
 type Watcher<T> = {
     fn: (newValue: T, oldValue: T) => void;
     id: WatcherId;
@@ -111,11 +112,9 @@ export function record<T>(fn: () => T): [T, HyperValue<any>[]] {
     return [result, hvRecordStop()];
 }
 
-export interface PromiseWrapper<T> {
-    (p: Promise<T>): Promise<T>;
-}
+export type PromiseWrapper = <T>(p: Promise<T>) => Promise<T>;
 
-export function recordAsync<T>(fn: (w: PromiseWrapper<T>) => Promise<T>): Promise<[T, HyperValue<any>[]]> {
+export function recordAsync<T>(fn: (w: PromiseWrapper) => Promise<T>): Promise<[T, HyperValue<any>[]]> {
     return new Promise((resolve) => {
         let deps = [] as HyperValue<any>[];
 

@@ -1,4 +1,4 @@
-import {HyperValue, record, WatcherFn, WatcherId, recordAsync, PromiseWrapper} from '../core';
+import {HyperValue, record, WatcherFn, WatcherId} from '../core';
 
 export function hvMake<T>(value?: T): HyperValue<T> {
     return new HyperValue(value as T);
@@ -36,26 +36,6 @@ export function hvAuto<T>(fn: () => T): HyperValue<T> {
     watcher();
 
     return hv;
-}
-
-export function hvAsync<T>(fn: (w: PromiseWrapper<T>) => Promise<T>): Promise<HyperValue<T>> {
-    return new Promise(resolve => {
-        const hv = new HyperValue<any>(null);
-
-        function watcher() {
-            return new Promise((resolve) => {
-                recordAsync(fn).then(([value, deps]) => {
-                    hv.s(value);
-                    hvOnceOf(deps, watcher);
-                    resolve(hv);
-                });
-            });
-        }
-
-        watcher().then(hv => {
-            resolve(hv as HyperValue<T>);
-        });
-    });
 }
 
 export function hvWrap<I, O>(hv: HyperValue<I>, fn: (value: I) => O): HyperValue<O> {
