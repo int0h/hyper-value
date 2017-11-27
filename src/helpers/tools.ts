@@ -52,17 +52,17 @@ export function hvCast<T>(rawValue: T | HyperValue<T>): HyperValue<T> {
 
 export function hvOnceOf(hvs: HyperValue<any>[], watcher: WatcherFn<any>) {
     const commonWatcher = (newValue: any, oldValue: any) => {
-        for (let [hv, id] of links) {
+        for (let [hv, id] of subscribers) {
             hv.unwatch(id);
         }
         watcher(newValue, oldValue);
     };
 
-    let links: [HyperValue<any>, WatcherId][] = [];
+    let subscribers: [HyperValue<any>, WatcherId][] = [];
 
     for (let hv of hvs) {
         const id = hv.watch(commonWatcher);
-        links.push([hv, id]);
+        subscribers.push([hv, id]);
     }
 }
 
