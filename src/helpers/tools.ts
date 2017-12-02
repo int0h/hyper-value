@@ -66,3 +66,14 @@ export function hvOnceOf(hvs: HyperValue<any>[], watcher: WatcherFn<any>) {
     }
 }
 
+export function linkWatcher(hv: HyperValue<any>, deps: HyperValue<any>[], watcher: WatcherFn<any>): number[] {
+    return deps.map(dep => {
+        return hv.link(dep, watcher);
+    });
+}
+
+export function unlinkWatcher(hv: HyperValue<any>, depIds: number[]): void {
+    for (const depId of depIds) {
+        hv.unlink(depId);
+    }
+}

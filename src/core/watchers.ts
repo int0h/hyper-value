@@ -8,7 +8,6 @@ export interface WatcherFn<T> {
 
 export type Watcher<T> = {
     fn: (newValue: T, oldValue: T) => void;
-    id: WatcherId;
     once: boolean;
 };
 

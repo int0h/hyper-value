@@ -1,12 +1,17 @@
 import {Watcher, WatcherId, WatcherFn, addToRecords} from './watchers';
+import {List} from '../utils/list';
+
+export interface Dep {
+    hv: HyperValue<any>;
+    watcherId: WatcherId;
+}
 
 export class HyperValue<T> {
-    private watchers: Watcher<T>[] = [];
-    private watchersToDelete = new Set<WatcherId>();
+    private watchers: List<Watcher<T>> = new List();
     private value: T;
     private newValue: T;
     private updating = false;
-    private currentWatcherId = 0;
+    private deps: List<Dep> = new List();
     debug: any;
 
     constructor(initialValue: T) {
@@ -33,12 +38,7 @@ export class HyperValue<T> {
 
         this.newValue = newValue;
 
-        this.cleanWatchers();
         const runList = this.getHandlers();
-
-        if (runList.length % 10 === 0 && runList.length > 10) {
-            console.log('runners', runList.length);
-        }
 
         for (let fn of runList) {
             fn(newValue, this.value);
@@ -52,9 +52,9 @@ export class HyperValue<T> {
     private getHandlers(): WatcherFn<T>[] {
         let toRun: WatcherFn<T>[] = [];
 
-        for (let watcher of this.watchers) {
+        for (let [id, watcher] of this.watchers.entries()) {
             if (watcher.once) {
-                this.unwatch(watcher.id);
+                this.unwatch(id);
             }
             toRun.push(watcher.fn);
         }
@@ -63,59 +63,28 @@ export class HyperValue<T> {
     }
 
     watch(fn: WatcherFn<T>, once: boolean = false): WatcherId {
-        const id = this.currentWatcherId;
-        this.currentWatcherId++;
-        const watcher = {fn, id, once};
-        this.watchers.push(watcher);
-        if (this.watchers.length % 10 === 0) {
-            console.log('watchers', this.watchers.length);
-        }
-        return id;
+        return this.watchers.add({fn, once});
     }
 
     unwatch(id: WatcherId) {
-        this.watchersToDelete.add(id);
-
-        onNextTick(this.cleanWatchers);
+        this.watchers.del(id);
     }
 
-    cleanWatchers = () => {
-        if (this.watchersToDelete.size < 1) {
-            return;
-        }
-
-        let deletedCount = 0;
-        let newWatchers: Watcher<T>[] = [];
-
-        for (let watcher of this.watchers) {
-            if (this.watchersToDelete.has(watcher.id)) {
-                deletedCount++;
-                continue;
-            }
-            newWatchers.push(watcher);
-        }
-
-        if (this.watchersToDelete.size !== deletedCount) {
-            throw new Error('Bad watcher ID');
-        }
-
-        this.watchersToDelete = new Set<WatcherId>();
-        this.watchers = newWatchers;
-    }
-}
-
-
-let nextTickTaskList: Function[] = [];
-
-function onNextTick(task: () => void) {
-    if (nextTickTaskList.length === 0) {
-        setTimeout(() => {
-            for (let task of nextTickTaskList) {
-                task();
-            }
-            nextTickTaskList = [];
-        }, 0);
+    link(hv: HyperValue<any>, fn: WatcherFn<T>): number {
+        const watcherId = dep.watch(fn);
+        return this.deps.add({hv, watcherId});
     }
 
-    nextTickTaskList.push(task);
+    unlink(id: number) {
+        const dep = this.deps.get(id);
+        dep.hv.unwatch(dep.watcherId);
+        this.deps.del(id);
+    }
+
+    free() {
+        this.watchers = new List();
+        for (let [id] of this.deps.entries()) {
+            this.unlink(id);
+        }
+    }
 }
