@@ -71,7 +71,7 @@ export class HyperValue<T> {
     }
 
     link(hv: HyperValue<any>, fn: WatcherFn<T>): number {
-        const watcherId = dep.watch(fn);
+        const watcherId = hv.watch(fn);
         return this.deps.add({hv, watcherId});
     }
 

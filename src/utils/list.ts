@@ -4,7 +4,7 @@ export interface IdDict<T> {
 
 // todo redo with hash table
 export class List<T> {
-    private items: IdDict<T>;
+    private items: IdDict<T> = {};
     currentId = 0;
 
     add(item: T): number {

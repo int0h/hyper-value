@@ -1,41 +1,40 @@
-import {HyperValue, record, WatcherFn, WatcherId} from '../core';
+import {HyperValue, record, WatcherFn} from '../core';
 
 export function hvMake<T>(value?: T): HyperValue<T> {
     return new HyperValue(value as T);
 }
 
-export function hvBind<T>(hv: HyperValue<T>, deps: HyperValue<any>[], fn: (params: HyperValue<any>[]) => T) {
-    for (let dep of deps) {
-        dep.watch(() => {
-            hv.s(fn(deps));
-        });
-    }
-}
+export function hvAuto<T>(fn: () => T): HyperValue<T> {
+    const hv = new HyperValue(null as any as T);
 
-export function hvEval<T>(deps: HyperValue<any>[], fn: (params: HyperValue<any>[]) => T): HyperValue<T> {
-    const hv = hvMake<any>(null) as HyperValue<T>;
-
-    hvBind(hv, deps, fn);
-
-    hv.s(fn(deps));
+    hvBind(hv, {init: true}, fn);
 
     return hv;
 }
 
-export function hvAuto<T>(fn: () => T): HyperValue<T> {
-    const hv = hvMake<T>();
+export interface HvBindParams {
+    init?: boolean;
+}
 
-    const watcher = () => {
+export function hvBind<T>(hv: HyperValue<T>, params: HvBindParams, fn: () => T) {
+    let depIdList = [] as number[];
+    let firstRun = true;
+
+    function watcher() {
+        unlinkWatcher(hv, depIdList);
+
         const [value, deps] = record(fn);
 
-        hv.s(value);
+        depIdList = linkWatcher(hv, deps, watcher);
 
-        hvOnceOf(deps, watcher);
-    };
+        if (!firstRun || params.init) {
+            hv.s(value);
+        }
+
+        firstRun = false;
+    }
 
     watcher();
-
-    return hv;
 }
 
 export function hvWrap<I, O>(hv: HyperValue<I>, fn: (value: I) => O): HyperValue<O> {
@@ -58,7 +57,7 @@ export function hvOnceOf(hvs: HyperValue<any>[], watcher: WatcherFn<any>) {
         watcher(newValue, oldValue);
     };
 
-    let subscribers: [HyperValue<any>, WatcherId][] = [];
+    let subscribers: [HyperValue<any>, number][] = [];
 
     for (let hv of hvs) {
         const id = hv.watch(commonWatcher);

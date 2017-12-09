@@ -6,6 +6,9 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
+            "runtimeArgs": [
+                "--expose-gc"
+            ],
             "program": "${file}",
             "outFiles": [
                 "${workspaceFolder}/dist/**/*.js"

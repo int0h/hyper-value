@@ -1,5 +1,5 @@
 import {HyperValue} from '../core';
-import {hvAuto, hvEval, hvBind, hvCast} from './tools';
+import {hvAuto, hvBind, hvCast} from './tools';
 
 export type IterationFunc<T, R> = (value: T, index: number) => R;
 export type ReduceFunc<T> = (acc: any, value: T, index: number) => any;

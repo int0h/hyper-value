@@ -1,7 +1,7 @@
 import test = require('tape');
 
 import {HyperValue} from '../core';
-import {hvAuto, hvBind, hvEval, hvMake, hvWrap, hvCast} from '../helpers/tools';
+import {hvAuto, hvBind, hvMake, hvWrap, hvCast} from '../helpers/tools';
 
 test('instance created', t => {
     const hv = hvMake(0);
@@ -9,28 +9,16 @@ test('instance created', t => {
     t.end();
 });
 
-test('basic bind', t => {
-    const hv = hvMake(0);
-    const hv2 = hvMake(0);
-    hvBind(hv, [hv2], () => {
-        return hv2.g() + 1;
-    });
-    hv2.s(2);
-    t.is(hv.g(), 3);
-    t.end();
-});
-
-test('basic bind', t => {
-    const a = hvMake(5);
-    const b = hvMake(5);
-    const sum = hvEval([a, b], () => {
-        return a.g() + b.g();
-    });
-    t.is(sum.g(), 10);
-    a.s(10);
-    t.is(sum.g(), 15);
-    t.end();
-});
+// test('basic bind', t => {
+//     const hv = hvMake(0);
+//     const hv2 = hvMake(0);
+//     hvBind(hv, [hv2], () => {
+//         return hv2.g() + 1;
+//     });
+//     hv2.s(2);
+//     t.is(hv.g(), 3);
+//     t.end();
+// });
 
 test('basic wrap', t => {
     const a = hvMake(5);
