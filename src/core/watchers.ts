@@ -6,10 +6,7 @@ export interface WatcherFn<T> {
     (newValue: T, oldValue: T): void;
 }
 
-export type Watcher<T> = {
-    fn: (newValue: T, oldValue: T) => void;
-    once: boolean;
-};
+
 
 export type WatcherId = number;
 

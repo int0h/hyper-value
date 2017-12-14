@@ -2,7 +2,6 @@ export interface IdDict<T> {
     [key: number]: T;
 }
 
-// todo redo with hash table
 export class List<T> {
     private items: IdDict<T> = {};
     currentId = 0;
@@ -20,6 +19,10 @@ export class List<T> {
 
     get(id: number) {
         return this.items[id];
+    }
+
+    set(id: number, value: T) {
+        this.items[id] = value;
     }
 
     entries(): [number, T][] {
