@@ -1,5 +1,5 @@
 import test = require('tape');
-import {HyperValue, hvAuto} from '..';
+import {HyperValue, hvAuto, HvScope} from '..';
 import weak = require('weak');
 
 declare function gc(): void;
@@ -67,5 +67,25 @@ test('subscriber free', t => {
     subscriber = null;
     gc();
     t.is(weak.isDead(ws), true);
+    t.end();
+});
+
+test('hvScope basics', t => {
+    const scope = new HvScope();
+    let a: NullableHv = scope.hv(1);
+    let b: NullableHv = scope.hv(2);
+    let outOfScope = new HyperValue(3);
+    let c: NullableHv = scope.hvAuto(() => (a as HyperValue<number>).g() * outOfScope.g());
+    const wa = weak(a);
+    const wb = weak(b);
+    const wc = weak(c);
+    a = null;
+    b = null;
+    c = null;
+    scope.free();
+    gc();
+    t.is(weak.isDead(wa), true);
+    t.is(weak.isDead(wb), true);
+    t.is(weak.isDead(wc), true);
     t.end();
 });
