@@ -1,22 +1,37 @@
 import {HyperValue} from '../core/core';
-import {globalDispatcher, Watcher} from '../core/dispatcher';
+import {globalDispatcher, WatcherFn} from '../core/dispatcher';
 import {List, IdDict} from '../utils/list';
 
-export class BaseHvScope {
-    private watcherList: List<List<number>> = new List();
+export class BaseScope {
+    private watcherList: IdDict<IdDict<number>> = {};
 
-    watch<T>(hv: HyperValue<T>, fn: Watcher<T>): number {
+    watch<T>(hv: HyperValue<T>, fn: WatcherFn<T>): number {
         const watcherId = globalDispatcher.watch(hv.id, fn);
-        this.watcherList.get(hv.id).add(watcherId);
+        let watcherSet = this.watcherList[hv.id];
+        if (!watcherSet) {
+            watcherSet = {};
+            this.watcherList[hv.id] = watcherSet;
+        }
+        watcherSet[watcherId] = watcherId;
         return watcherId;
     }
 
     unwatch(hv: HyperValue<any>, watcherId: number) {
+        const watcherSet = this.watcherList[hv.id];
+        if (!watcherSet) {
+            throw new Error('incorrect hv ID');
+        }
+        delete watcherSet[watcherId];
         globalDispatcher.unwatch(hv.id, watcherId);
-        this.watcherList[hv.id].del(watcherId);
     }
 
     free() {
-
+        for (const hvId in this.watcherList) {
+            const watcherSet = this.watcherList[hvId];
+            for (const watcherId in watcherSet) {
+                globalDispatcher.unwatch(Number(hvId), Number(watcherId));
+            }
+        }
+        this.watcherList = {};
     }
 }

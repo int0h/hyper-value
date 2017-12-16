@@ -1,15 +1,15 @@
 import {List, IdDict} from '../utils/list';
 
-export type Watcher<T> = {
-    fn: (newValue: T, oldValue: T) => void;
-};
+export interface WatcherFn<T> {
+    (newValue: T, oldValue: T): void;
+}
 
-type WatcherList = List<Watcher<any>>;
+type WatcherList = List<WatcherFn<any>>;
 
 export class HvDispatcher {
     private watcherSets: IdDict<WatcherList> = {};
 
-    watch(hvId: number, fn: Watcher<any>): number {
+    watch(hvId: number, fn: WatcherFn<any>): number {
         let currentSet = this.watcherSets[hvId];
         if (!currentSet) {
             this.watcherSets[hvId] = new List();
@@ -31,7 +31,7 @@ export class HvDispatcher {
             return;
         }
         currentSet.entries().forEach(([, watcher]) => {
-            watcher.fn(oldValue, newValue);
+            watcher(oldValue, newValue);
         });
     }
 }
