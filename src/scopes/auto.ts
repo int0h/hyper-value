@@ -1,5 +1,5 @@
 import {HyperValue} from '../core/core';
-import {record} from '../core/watchers';
+import {record} from '../core';
 import {BaseScope} from './base';
 
 interface Dep {

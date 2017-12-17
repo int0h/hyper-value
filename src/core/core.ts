@@ -1,4 +1,4 @@
-import {addToRecords} from './watchers';
+import {addToRecords} from './record';
 import {globalDispatcher} from './dispatcher';
 
 let currentId = 0;
