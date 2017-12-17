@@ -1,9 +1,9 @@
 import {HyperValue} from '../core/core';
 import {globalDispatcher, WatcherFn} from '../core/dispatcher';
-import {List, IdDict} from '../utils/list';
+import {IdDict} from '../utils/list';
 
 export class BaseScope {
-    private watcherList: IdDict<IdDict<number>> = {};
+    watcherList: IdDict<IdDict<number>> = {};
 
     watch<T>(hv: HyperValue<T>, fn: WatcherFn<T>): number {
         const watcherId = globalDispatcher.watch(hv.id, fn);

@@ -22,7 +22,9 @@
   "scripts": {
     "test": "node_modules/.bin/nyc node --expose-gc ./node_modules/.bin/tape ./dist/tests/**/*.js | ./node_modules/.bin/tap-spec"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@types/weak": "^1.0.0"
+  },
   "nyc": {
     "exclude": [
       "**/src/tests/*.*",

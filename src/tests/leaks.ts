@@ -1,5 +1,5 @@
 import test = require('tape');
-import {HyperValue, hvAuto, HvScope} from '..';
+import {HyperValue, scopes} from '..';
 import weak = require('weak');
 
 declare function gc(): void;
@@ -29,24 +29,26 @@ test('weak works', t => {
 type NullableHv = HyperValue<number> | null;
 
 test('watchers are kept source hv', t => {
+    const hs = new scopes.FullScope();
     const hv = new HyperValue(0);
     let func: any = () => {};
     const wFunc = weak(func);
-    const watcherId = hv.watch(func);
+    const watcherId = hs.watch(hv, func);
     func = null;
     gc();
     t.is(weak.isDead(wFunc), false);
 
     // unwatch fixes it
-    hv.unwatch(watcherId);
+    hs.unwatch(hv, watcherId);
     gc();
     t.is(weak.isDead(wFunc), true);
     t.end();
 });
 
 test('source wathcers keep subscribers', t => {
+    const hs = new scopes.FullScope();
     let source: NullableHv = new HyperValue(0);
-    let subscriber: NullableHv = hvAuto(() => (source as HyperValue<number>).g() * 100);
+    let subscriber: NullableHv = hs.auto(() => (source as HyperValue<number>).g() * 100);
     const ws = weak(subscriber as HyperValue<number>);
     subscriber = null;
     gc();
@@ -60,8 +62,9 @@ test('source wathcers keep subscribers', t => {
 });
 
 test('subscriber free', t => {
+    const hs = new scopes.FullScope();
     let source: NullableHv = new HyperValue(0);
-    let subscriber: NullableHv = hvAuto(() => (source as HyperValue<number>).g() * 100);
+    let subscriber: NullableHv = hs.auto(() => (source as HyperValue<number>).g() * 100);
     const ws = weak(subscriber as HyperValue<number>);
     subscriber.free();
     subscriber = null;
@@ -71,6 +74,7 @@ test('subscriber free', t => {
 });
 
 test('hvScope basics', t => {
+    const hs = new scopes.FullScope();
     const scope = new HvScope();
     let a: NullableHv = scope.hv(1);
     let b: NullableHv = scope.hv(2);

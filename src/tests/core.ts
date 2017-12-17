@@ -1,5 +1,6 @@
 import test = require('tape');
-import {HyperValue, record} from '../core';
+import {record} from '../core';
+import {HyperValue, scopes} from '..';
 
 test('instance created', t => {
     const hv = new HyperValue(0);
@@ -8,8 +9,9 @@ test('instance created', t => {
 });
 
 test('watcher works', t => {
+    const hs = new scopes.FullScope();
     const hv = new HyperValue(0);
-    hv.watch(() => {
+    hs.watch(hv, () => {
         t.pass();
         t.end();
     });
@@ -17,8 +19,9 @@ test('watcher works', t => {
 });
 
 test('watcher gets values', t => {
+    const hs = new scopes.FullScope();
     const hv = new HyperValue(0);
-    hv.watch((newValue, oldValue) => {
+    hs.watch(hv, (newValue, oldValue) => {
         t.is(newValue, 1);
         t.is(oldValue, 0);
         t.end();
@@ -27,10 +30,11 @@ test('watcher gets values', t => {
 });
 
 test('hv can be unwatched', t => {
+    const hs = new scopes.FullScope();
     const hv = new HyperValue(0);
     const watcher = () => t.fail();
-    const id = hv.watch(watcher);
-    hv.unwatch(id);
+    const id = hs.watch(hv, watcher);
+    hs.unwatch(hv, id);
     hv.s(1);
     t.pass();
     t.end();
@@ -104,9 +108,10 @@ test('record and silent get', t => {
 
 
 test('ignore cycle links', t => {
+    const hs = new scopes.FullScope();
     const hv = new HyperValue(0);
 
-    hv.watch(() => {
+    hs.watch(hv, () => {
         hv.s(hv.g() + 1);
     });
 

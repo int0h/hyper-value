@@ -6,10 +6,7 @@ export interface WatcherFn<T> {
     (newValue: T, oldValue: T): void;
 }
 
-
-
 export type WatcherId = number;
-
 
 function hvRecordStart() {
     recordedHvStack.push([]);

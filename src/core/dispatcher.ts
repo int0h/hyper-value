@@ -12,7 +12,8 @@ export class HvDispatcher {
     watch(hvId: number, fn: WatcherFn<any>): number {
         let currentSet = this.watcherSets[hvId];
         if (!currentSet) {
-            this.watcherSets[hvId] = new List();
+            currentSet = new List();
+            this.watcherSets[hvId] = currentSet;
         }
         return currentSet.add(fn);
     }
