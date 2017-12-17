@@ -41,4 +41,12 @@ export class HyperValue<T> {
         this.updating = false;
     }
 
+    get $() {
+        return this.g();
+    }
+
+    set $(newValue: T) {
+        this.s(newValue);
+    }
+
 }
