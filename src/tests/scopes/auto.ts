@@ -1,9 +1,9 @@
 import test = require('tape');
-import {HyperValue, scopes} from '../..';
-
+import {HyperValue} from '../..';
+import {AutoScope} from '../../scopes/auto';
 
 test('basic bind', t => {
-    const hs = new scopes.FullScope();
+    const hs = new AutoScope();
     const hv = new HyperValue(0);
     const hv2 = new HyperValue(0);
     hs.bind(hv, () => {
@@ -15,7 +15,7 @@ test('basic bind', t => {
 });
 
 test('basic auto', t => {
-    const hs = new scopes.FullScope();
+    const hs = new AutoScope();
     const a = new HyperValue(5);
     const b = new HyperValue(5);
     const sum = hs.auto(() => a.$ + b.$);
@@ -26,7 +26,7 @@ test('basic auto', t => {
 });
 
 test('auto multiple call', t => {
-    const hs = new scopes.FullScope();
+    const hs = new AutoScope();
     const a = new HyperValue(0);
     const exp = hs.auto(() => a.g());
     t.is(exp.g(), 0);
@@ -40,7 +40,7 @@ test('auto multiple call', t => {
 });
 
 test('auto multiple deps', t => {
-    const hs = new scopes.FullScope();
+    const hs = new AutoScope();
     const a = new HyperValue(1);
     const b = new HyperValue(2);
     const exp = hs.auto(() => a.g() || b.g());
@@ -53,7 +53,7 @@ test('auto multiple deps', t => {
 });
 
 test('nested auto and get', t => {
-    const hs = new scopes.FullScope();
+    const hs = new AutoScope();
     const a = new HyperValue(0);
     const b = new HyperValue(0);
     const exp = hs.auto(() => hs.auto(() => a.$).$ + b.$);
@@ -66,7 +66,7 @@ test('nested auto and get', t => {
 });
 
 test('multi auto with the same dep', t => {
-    const hs = new scopes.FullScope();
+    const hs = new AutoScope();
     const v = new HyperValue(0);
     const a1 = hs.auto(() => v.g());
     const a2 = hs.auto(() => v.g());
