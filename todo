@@ -1,5 +1,6 @@
 #branch todo
 - fix hvAsync
+- fix hvArray
 - hvBind test
 - hv scope
 

@@ -26,9 +26,7 @@ test('weak works', t => {
     }
 });
 
-type NullableHv = HyperValue<number> | null;
-
-test('watchers are kept source hv', t => {
+test('watchers are kept by source hv', t => {
     const hs = new scopes.FullScope();
     const hv = new HyperValue(0);
     let func: any = () => {};
@@ -45,51 +43,19 @@ test('watchers are kept source hv', t => {
     t.end();
 });
 
-test('source wathcers keep subscribers', t => {
+test('scopes can be freed', t => {
     const hs = new scopes.FullScope();
-    let source: NullableHv = new HyperValue(0);
-    let subscriber: NullableHv = hs.auto(() => (source as HyperValue<number>).g() * 100);
-    const ws = weak(subscriber as HyperValue<number>);
-    subscriber = null;
-    gc();
-    t.is(weak.isDead(ws), false);
+    const hv = new HyperValue(0);
+    let func: any = () => {};
+    const wFunc = weak(func);
+    hs.watch(hv, func);
 
-    // deleting source leads to proper gc
-    source = null;
+    func = null;
     gc();
-    t.is(weak.isDead(ws), true);
-    t.end();
-});
+    t.is(weak.isDead(wFunc), false);
 
-test('subscriber free', t => {
-    const hs = new scopes.FullScope();
-    let source: NullableHv = new HyperValue(0);
-    let subscriber: NullableHv = hs.auto(() => (source as HyperValue<number>).g() * 100);
-    const ws = weak(subscriber as HyperValue<number>);
-    subscriber.free();
-    subscriber = null;
+    hs.free();
     gc();
-    t.is(weak.isDead(ws), true);
-    t.end();
-});
-
-test('hvScope basics', t => {
-    const hs = new scopes.FullScope();
-    const scope = new HvScope();
-    let a: NullableHv = scope.hv(1);
-    let b: NullableHv = scope.hv(2);
-    let outOfScope = new HyperValue(3);
-    let c: NullableHv = scope.hvAuto(() => (a as HyperValue<number>).g() * outOfScope.g());
-    const wa = weak(a);
-    const wb = weak(b);
-    const wc = weak(c);
-    a = null;
-    b = null;
-    c = null;
-    scope.free();
-    gc();
-    t.is(weak.isDead(wa), true);
-    t.is(weak.isDead(wb), true);
-    t.is(weak.isDead(wc), true);
+    t.is(weak.isDead(wFunc), true);
     t.end();
 });
