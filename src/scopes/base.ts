@@ -16,13 +16,16 @@ export class BaseScope {
         return watcherId;
     }
 
-    unwatch(hv: HyperValue<any>, watcherId: number) {
-        const watcherSet = this.watcherList[hv.id];
+    unwatch(hv: HyperValue<any> | number, watcherId: number) {
+        const hvId = typeof hv === 'number'
+            ? hv
+            : hv.id;
+        const watcherSet = this.watcherList[hvId];
         if (!watcherSet) {
             throw new Error('incorrect hv ID');
         }
         delete watcherSet[watcherId];
-        globalDispatcher.unwatch(hv.id, watcherId);
+        globalDispatcher.unwatch(hvId, watcherId);
     }
 
     free() {

@@ -4,7 +4,7 @@ import {BaseScope} from './base';
 
 interface Dep {
     watcherId: number;
-    hv: HyperValue<any>;
+    hvId: number;
 }
 
 export class AutoScope extends BaseScope {
@@ -14,14 +14,14 @@ export class AutoScope extends BaseScope {
         const watcher = () => {
             // do we need it still?
             for (const dep of depList) {
-                this.unwatch(dep.hv, dep.watcherId);
+                this.unwatch(dep.hvId, dep.watcherId);
             }
 
             const [value, deps] = record(fn);
 
             depList = deps.map(hv => {
                 return {
-                    hv,
+                    hvId: hv.id,
                     watcherId: this.watch(hv, watcher)
                 };
             });
