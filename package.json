@@ -27,8 +27,8 @@
   },
   "nyc": {
     "exclude": [
-      "**/src/tests/*.*",
-      "**/dist/tests/*.*"
+      "**/src/tests/**/*.*",
+      "**/dist/tests/**/*.*"
     ]
   }
 }
