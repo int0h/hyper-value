@@ -1,5 +1,5 @@
 export interface Mixin<C1, C2> {
-    new (): C1 & C2;
+    new (...args: any[]): C1 & C2;
 }
 export type Constructor<T = {}> = new (...args: any[]) => T;
 

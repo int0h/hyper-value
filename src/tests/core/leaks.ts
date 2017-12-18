@@ -1,5 +1,5 @@
 import test = require('tape');
-import {HyperValue, scopes} from '..';
+import {HyperValue, scopes} from '../..';
 import weak = require('weak');
 
 declare function gc(): void;
@@ -7,7 +7,6 @@ declare function gc(): void;
 test('weak works', t => {
     let obj: {a: number} | null = {a: 2};
     const wr = weak(obj, () => {
-        console.log('f00');
         t.end();
     });
 

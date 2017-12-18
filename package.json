@@ -20,7 +20,8 @@
   "keywords": [],
   "typings": "./types/",
   "scripts": {
-    "test": "node_modules/.bin/nyc node --expose-gc ./node_modules/.bin/tape ./dist/tests/**/*.js | ./node_modules/.bin/tap-spec"
+    "test-report": "node_modules/.bin/nyc --reporter=lcov node --expose-gc ./node_modules/.bin/tape ./dist/tests/**/*.js | ./node_modules/.bin/tap-spec",
+    "test": "node_modules/.bin/nyc --console=detail node --expose-gc ./node_modules/.bin/tape ./dist/tests/**/*.js | ./node_modules/.bin/tap-spec"
   },
   "dependencies": {
     "@types/weak": "^1.0.0"

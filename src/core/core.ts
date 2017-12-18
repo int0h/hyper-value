@@ -34,7 +34,7 @@ export class HyperValue<T> {
 
         this.newValue = newValue;
 
-        globalDispatcher.handle(this.id, this.value, newValue);
+        globalDispatcher.handle(this.id, newValue, this.value);
 
         this.value = newValue;
 

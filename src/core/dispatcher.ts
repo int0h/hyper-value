@@ -26,13 +26,13 @@ export class HvDispatcher {
         currentSet.del(watcherId);
     }
 
-    handle(hvId: number, oldValue: any, newValue: any) {
+    handle(hvId: number, newValue: any, oldValue: any) {
         let currentSet = this.watcherSets[hvId];
         if (!currentSet) {
             return;
         }
         currentSet.entries().forEach(([, watcher]) => {
-            watcher(oldValue, newValue);
+            watcher(newValue, oldValue);
         });
     }
 }

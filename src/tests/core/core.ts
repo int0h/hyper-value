@@ -1,6 +1,7 @@
 import test = require('tape');
-import {record} from '../core';
-import {HyperValue, scopes} from '..';
+import {record} from '../../core';
+import {globalDispatcher} from '../../core/dispatcher';
+import {HyperValue, scopes} from '../..';
 
 test('instance created', t => {
     const hv = new HyperValue(0);
@@ -40,47 +41,13 @@ test('hv can be unwatched', t => {
     t.end();
 });
 
-// test('hv can be unwatched by watcher function', t => {
-//     const hv = new HyperValue(0);
-//     const watcher = () => t.fail();
-//     hv.watch(watcher);
-//     hv.unwatch(watcher);
-//     hv.s(1);
-//     t.pass();
-// });
-
-// test('throws on attempt of deleting non existing watcher', t => {
-//     const hv = new HyperValue(0);
-//     t.throws(() => {
-//         hv.unwatch(() => {});
-//     });
-// });
-
-// test('throws on attempt of adding a watcher twice', t => {
-//     const hv = new HyperValue(0);
-//     const watcher = () => t.fail();
-//     t.throws(() => {
-//         hv.watch(watcher);
-//         hv.watch(watcher);
-//     });
-// });
-
-// test('allows adding a watcher twice by explicit option', t => {
-//     const hv = new HyperValue(0);
-//     const watcher = () => t.fail();
-//     t.notThrows(() => {
-//         hv.watch(watcher, true);
-//         hv.watch(watcher, true);
-//     });
-// });
-
-// test('allows adding a watcher twice by explicit option', t => {
-//     const hv = new HyperValue(0);
-//     const watcher = () => t.fail();
-//     hv.watch(watcher, true);
-//     hv.watch(watcher, true);
-//     t.true(hv.hasWatcher(watcher));
-// });
+test('dispatcher unwatch with invalid ID', t => {
+    const hv = new HyperValue(0);
+    t.throws(() => {
+        globalDispatcher.unwatch(hv.id, 123);
+    });
+    t.end();
+});
 
 test('record basics', t => {
     const hv = new HyperValue(0);
