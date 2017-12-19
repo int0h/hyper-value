@@ -1,7 +1,6 @@
 import {HyperValue, recordAsync, PromiseWrapper} from '../core';
 import {BaseScope} from './base';
 
-
 export interface AsyncFn<T> {
     (w: PromiseWrapper): Promise<T>;
 }
@@ -15,7 +14,6 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
     state: HyperValue<'pending' | 'resolved' | 'rejected'>;
     private getter: AsyncFn<T>;
     private hs: BaseScope;
-    private inited: Promise<HvAsync<T, T>>;
     private currentPromise: null | Promise<HvAsync<T, T>> = null;
 
     constructor(hs: BaseScope, initial: I, fn: AsyncFn<T>) {
