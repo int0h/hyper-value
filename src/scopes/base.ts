@@ -3,7 +3,8 @@ import {globalDispatcher, WatcherFn} from '../core/dispatcher';
 import {IdDict} from '../utils/list';
 
 export class BaseScope {
-    watcherList: IdDict<IdDict<number>> = {};
+    private watcherList: IdDict<IdDict<number>> = {};
+    private children: BaseScope[] = [];
 
     watch<T>(hv: HyperValue<T>, fn: WatcherFn<T>): number {
         const watcherId = globalDispatcher.watch(hv.id, fn);
@@ -36,5 +37,10 @@ export class BaseScope {
             }
         }
         this.watcherList = {};
+        this.children.forEach(child => child.free());
+    }
+
+    regChild(child: BaseScope) {
+        this.children.push(child);
     }
 }
