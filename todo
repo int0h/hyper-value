@@ -13,3 +13,4 @@
 - hv helper
 - better clean-up system
 - do not update if new value is equal to old one
+- async duplex
