@@ -64,7 +64,7 @@ export interface AsyncSetter<T> {
 }
 
 export class AsyncScope extends BaseScope {
-    async<T, I>(inited: I, getter: AsyncFn<T>, setter?: AsyncSetter<T>): HvAsync<T, I> {
+    async<T, I>(inited: I, getter: AsyncFn<T>/*, setter?: AsyncSetter<T>*/): HvAsync<T, I> {
         return new HvAsync(this, inited, getter);
     }
 }

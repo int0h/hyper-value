@@ -18,7 +18,7 @@
     "weak": "^1.0.1"
   },
   "keywords": [],
-  "typings": "./types/",
+  "typings": "./types/index.d.ts",
   "scripts": {
     "test-report": "node_modules/.bin/nyc --reporter=lcov node --expose-gc ./node_modules/.bin/tape ./dist/tests/**/*.js | ./node_modules/.bin/tap-spec",
     "test": "node_modules/.bin/nyc --console=detail node --expose-gc ./node_modules/.bin/tape ./dist/tests/**/*.js | ./node_modules/.bin/tap-spec"
