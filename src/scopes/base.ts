@@ -1,7 +1,9 @@
 import {HyperValue} from '../core/core';
 import {globalDispatcher, WatcherFn} from '../core/dispatcher';
 import {IdDict} from '../utils/list';
+import {scopeDebug} from '../debug';
 
+@scopeDebug
 export class BaseScope {
     private watcherList: IdDict<IdDict<number>> = {};
     private children: BaseScope[] = [];
