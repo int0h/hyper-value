@@ -20,3 +20,31 @@ test('list test', t => {
     t.is(inst.foo, 3);
     t.end();
 });
+
+test('prototype chain', t => {
+    class A {
+        foo() {
+            return 1;
+        }
+    }
+
+    class B extends A {
+        boo() {
+            return 2;
+        }
+    }
+
+    class C {
+        coo() {
+            return 3;
+        }
+    }
+
+    const Mixed = mix(B, C);
+
+    const inst = new Mixed();
+    t.is(inst.foo(), 1);
+    t.is(inst.boo(), 2);
+    t.is(inst.coo(), 3);
+    t.end();
+});
