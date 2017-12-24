@@ -35,7 +35,7 @@ export class BaseScope {
         for (const hvId in this.watcherList) {
             const watcherSet = this.watcherList[hvId];
             for (const watcherId in watcherSet) {
-                globalDispatcher.unwatch(Number(hvId), Number(watcherId));
+                this.unwatch(Number(hvId), Number(watcherId));
             }
         }
         this.watcherList = {};

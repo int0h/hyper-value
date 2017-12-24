@@ -1,18 +1,18 @@
 import {addToRecords} from './record';
 import {globalDispatcher} from './dispatcher';
+import {hvDebug} from '../debug';
 
 let currentId = 0;
 
+@hvDebug
 export class HyperValue<T> {
     private value: T;
     private newValue: T;
     private updating = false;
     id = currentId++;
-    debug: any;
 
     constructor(initialValue: T) {
         this.value = initialValue;
-        this.debug = new Error('');
     }
 
     g(silent?: boolean): T {
