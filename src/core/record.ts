@@ -35,13 +35,23 @@ export function record<T>(fn: () => T): [T, HyperValue<any>[]] {
 
 export type PromiseWrapper = <T>(p: Promise<T>) => Promise<T>;
 
-export function recordAsync<T>(fn: (w: PromiseWrapper) => Promise<T>): Promise<[T, HyperValue<any>[]]> {
+export function recordAsync<T>(
+    fn: (w: PromiseWrapper) => Promise<T>,
+    noNewDeps?: (deps: HyperValue<any>[]) => void
+): Promise<[T, HyperValue<any>[]]> {
+
     return new Promise((resolve) => {
         let deps = [] as HyperValue<any>[];
 
         function w<T>(p: Promise<T>): Promise<T> {
             return new Promise((resolve) => {
-                deps.push(...hvRecordStop());
+                const newDeps = hvRecordStop();
+
+                deps = deps.concat(newDeps);
+                if (noNewDeps) {
+                    noNewDeps(newDeps);
+                }
+
                 p.then(value => {
                     hvRecordStart();
                     resolve(value);
@@ -52,6 +62,11 @@ export function recordAsync<T>(fn: (w: PromiseWrapper) => Promise<T>): Promise<[
         hvRecordStart();
         fn(w).then(value => {
             const finalDeps = [...deps, ...hvRecordStop()];
+
+            if (noNewDeps) {
+                noNewDeps(deps);
+            }
+
             resolve([value, finalDeps]);
         });
 

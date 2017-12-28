@@ -19,12 +19,15 @@ export class BaseScope {
         return watcherId;
     }
 
-    unwatch(hv: HyperValue<any> | number, watcherId: number) {
+    unwatch(hv: HyperValue<any> | number, watcherId: number, tolerate?: boolean) {
         const hvId = typeof hv === 'number'
             ? hv
             : hv.id;
         const watcherSet = this.watcherList[hvId];
         if (!watcherSet) {
+            if (tolerate) {
+                return;
+            }
             throw new Error('incorrect hv ID');
         }
         delete watcherSet[watcherId];

@@ -14,7 +14,7 @@ export class AutoScope extends BaseScope {
         const watcher = () => {
             // do we need it still?
             for (const dep of depList) {
-                this.unwatch(dep.hvId, dep.watcherId);
+                this.unwatch(dep.hvId, dep.watcherId, true);
             }
 
             const [value, deps] = record(fn);

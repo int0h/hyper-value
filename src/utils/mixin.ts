@@ -26,11 +26,9 @@ function getPrototypeChain(baseProto: any) {
 }
 
 export function mix<BC, C>(baseClass: Constructor<BC>, mixClass: Constructor<C>) {
-    class NewClass {
-        constructor(...args: any[]) {
-            baseClass.apply(this, args);
-            mixClass.apply(this, args);
-        }
+    function NewClass (...args: any[]) {
+        baseClass.apply(this, args);
+        mixClass.apply(this, args);
     }
 
     [baseClass, mixClass].forEach(baseCtor => {

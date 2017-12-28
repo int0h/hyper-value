@@ -18,7 +18,7 @@ test('hvAsync basic', async t => {
     const a = new HyperValue(0);
     const b = await hs.async(null, async w => {
         return await w(returnDelayed(a.g() * 2, 50));
-    }).fetch();
+    }).wait();
 
     t.is(b.g(), 0);
     a.s(2);
@@ -39,7 +39,7 @@ test('hvAsync ignore parallel writting', async t => {
     const c = await hs.async(null, async w => {
         callCount++;
         return await w(returnDelayed(a.g() * 2, 50));
-    }).fetch();
+    }).wait();
 
     t.is(b.g(), 1);
     t.is(c.g(), 0);
@@ -61,7 +61,7 @@ test('hvAsync multi hv capturing', async t => {
         await w(returnDelayed(argA, 100));
         const argB = argA + b.g() * 2;
         return await w(returnDelayed(argB, 100));
-    }).fetch();
+    }).wait();
 
     t.is(c.g(), 0);
     a.s(2);
@@ -100,5 +100,40 @@ test('hvAsync sync: init value', async t => {
     t.is(a.g(), 1);
     await wait(150);
     t.is(a.g(), 3);
+    t.end();
+});
+
+test('hvAsync: proper order of values', async t => {
+    let calledTimes = 0;
+    const hs = new AsyncScope();
+    const a = new HyperValue(5);
+
+    const b = hs.async(null, async w => {
+        return calledTimes++ < 1
+            ? await w(returnDelayed(a.$ * 1, 100))
+            : await w(returnDelayed(a.$ * 2, 10));
+    });
+
+    a.$ = 10;
+    t.is(b.g(), null);
+    await wait(20);
+    t.is(b.$, 20);
+    await wait(150);
+    t.is(b.$, 20);
+    t.end();
+});
+
+test('hvAsync: state', async t => {
+    const hs = new AsyncScope();
+
+    const a = hs.async(null, async w => {
+        return await w(returnDelayed(1, 10));
+    });
+
+    t.is(a.g(), null);
+    t.is(a.state.$, 'pending');
+    await wait(20);
+    t.is(a.g(), 1);
+    t.is(a.state.$, 'resolved');
     t.end();
 });

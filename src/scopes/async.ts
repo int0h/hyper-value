@@ -11,51 +11,72 @@ interface Dep {
 }
 
 export class HvAsync<T, I> extends HyperValue<T | I> {
-    state: HyperValue<'pending' | 'resolved' | 'rejected'>;
+    state = new HyperValue('pending') as HyperValue<'pending' | 'resolved' | 'rejected'>;
     private getter: AsyncFn<T>;
     private hs: BaseScope;
-    private currentPromise: null | Promise<HvAsync<T, T>> = null;
+    private callId = 0;
+    private currentPromise: Promise<T>;
+    private resolver: () => void;
 
     constructor(hs: BaseScope, initial: I, fn: AsyncFn<T>) {
         super(initial);
         this.hs = hs;
         this.getter = fn;
-        this.fetch();
+        this.initPromise();
+        this.init();
     }
 
-    fetch(): Promise<HvAsync<T, T>> {
-        if (this.currentPromise) {
-            return this.currentPromise;
-        }
-
-        let depList = [] as Dep[];
-
+    private initPromise() {
         this.currentPromise = new Promise(resolve => {
-            const watcher = () => {
-                for (const dep of depList) {
-                    this.hs.unwatch(dep.hvId, dep.watcherId);
+            this.resolver = resolve;
+        });
+    }
+
+    private fetch(fn: () => Promise<T>): Promise<T> {
+        return new Promise(resolve => {
+            this.callId++;
+            const id = this.callId;
+
+            this.state.$ = 'pending';
+
+            fn().then(value => {
+                if (this.callId === id) {
+                    this.$ = value;
+                    this.state.$ = 'resolved';
+                    this.resolver();
+                    this.initPromise();
                 }
 
-                recordAsync(this.getter).then(([value, deps]) => {
-                    this.currentPromise = null;
-
-                    depList = deps.map(hv => {
-                        return {
-                            hvId: hv.id,
-                            watcherId: this.hs.watch(hv, watcher)
-                        };
-                    });
-
-                    this.s(value);
-
-                    resolve(this as HvAsync<T, T>);
-                });
-            };
-
-            watcher();
+                resolve(value);
+            });
         });
+    }
 
-        return this.currentPromise;
+    wait(): Promise<HvAsync<T, T>> {
+        return this.currentPromise.then(() => this as any as HvAsync<T, T>);
+    }
+
+    init() {
+        let depList = [] as Dep[];
+
+        const watcher = () => {
+            for (const dep of depList) {
+                this.hs.unwatch(dep.hvId, dep.watcherId);
+            }
+
+            recordAsync(w => {
+                return this.fetch(() => this.getter(w));
+            }, deps => {
+                depList = depList.concat(deps.map(hv => {
+                    return {
+                        hvId: hv.id,
+                        watcherId: this.hs.watch(hv, watcher)
+                    };
+                }));
+            });
+        };
+
+        watcher();
     }
 }
 

@@ -1,7 +1,7 @@
 import test = require('tape');
 import {HyperValue, scopes} from '../..';
 
-test('--', t => {
+test('tolerate unwatch in auto', t => {
     const gs = new scopes.FullScope();
 
     const keys = new HyperValue(3);
@@ -12,9 +12,11 @@ test('--', t => {
         renderHs.free();
         renderHs = new scopes.FullScope();
         const a = renderHs.auto(() => keys.$ && 1);
-        const b = renderHs.auto(() => keys.$ && 1);
-        a.$;
+        renderHs.auto(() => keys.$ && 1);
+        a.g();
     });
 
     keys.$ = 33;
+    t.pass();
+    t.end();
 });
