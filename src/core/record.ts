@@ -61,10 +61,11 @@ export function recordAsync<T>(
 
         hvRecordStart();
         fn(w).then(value => {
-            const finalDeps = [...deps, ...hvRecordStop()];
+            const newDeps = hvRecordStop();
+            const finalDeps = [...deps, ...newDeps];
 
             if (noNewDeps) {
-                noNewDeps(deps);
+                noNewDeps(newDeps);
             }
 
             resolve([value, finalDeps]);
