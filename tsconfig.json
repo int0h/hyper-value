@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "es5",
         "noImplicitAny": true,
         "strictNullChecks": true,
         "moduleResolution": "node",
@@ -20,8 +20,6 @@
         "experimentalDecorators": true
     },
     "include": [
-        "./src/index.ts",
-        "./src/tests/**/*.ts",
-        "./src/temp/*.ts"
+        "./src/**/*.ts"
     ]
 }
