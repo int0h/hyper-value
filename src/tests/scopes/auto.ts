@@ -81,6 +81,41 @@ test('multi auto with the same dep', t => {
     t.end();
 });
 
+test('auto throws', t => {
+    const hs = new AutoScope();
+    const hv = new HyperValue(0);
+    const c = hs.auto(() => {
+        if (hv.$ < 2) {
+            return 0;
+        }
+        throw new Error('bad');
+    });
+    t.throws(() => {
+        hv.$ = 3;
+    });
+    hv.$ = 1;
+    t.is(c.$, 0, 'works after being thrown');
+    t.end();
+});
+
+test('auto catches on calculatable hv', t => {
+    const hs = new AutoScope();
+    const hv = new HyperValue(0);
+    const c = hs.auto(() => {
+        if (hv.$ < 2) {
+            return 0;
+        }
+        throw new Error('bad');
+    });
+    hs.catch(c, error => {
+        t.true(error instanceof Error);
+        t.is(error.message, 'bad');
+    });
+    hv.$ = 3;
+    t.end();
+});
+
+
 // test('auto watchers limit same deps', t => {
 //     const a = hvMake(0);
 

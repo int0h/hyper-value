@@ -1,5 +1,5 @@
-import {HyperValue} from '../core/core';
-import {record} from '../core';
+import {HyperValue, record} from '../core';
+import {globalDispatcher} from '../core/dispatcher';
 import {BaseScope} from './base';
 
 interface Dep {
@@ -11,20 +11,34 @@ export class AutoScope extends BaseScope {
     bind<T>(hv: HyperValue<T>, fn: () => T) {
         let depList = [] as Dep[];
 
+        const watchDeps = (hvIdList: number[]) => {
+            return hvIdList.map(hvId => {
+                return {
+                    hvId,
+                    watcherId: this.watch(hvId, watcher)
+                };
+            });
+        };
+
         const watcher = () => {
             // do we need it still?
             for (const dep of depList) {
                 this.unwatch(dep.hvId, dep.watcherId, true);
             }
 
-            const [value, deps] = record(fn);
+            let value, deps;
 
-            depList = deps.map(hv => {
-                return {
-                    hvId: hv.id,
-                    watcherId: this.watch(hv, watcher)
-                };
-            });
+            try {
+                [value, deps] = record(fn);
+            } catch (error) {
+                globalDispatcher.fail(hv.id, error, {
+                    oldValue: hv.$
+                });
+                depList = watchDeps(depList.map(dep => dep.hvId));
+                return;
+            }
+
+            depList = watchDeps(deps.map(hv => hv.id));
 
             hv.s(value);
         };

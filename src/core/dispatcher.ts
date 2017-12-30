@@ -14,9 +14,8 @@ interface HvData {
 }
 
 export interface ErrorDetails {
-    hvId: number;
-    oldValue: any;
-    newValue: any;
+    oldValue?: any;
+    newValue?: any;
 }
 
 export class HvDispatcher {
@@ -64,20 +63,21 @@ export class HvDispatcher {
             try {
                 watcher(newValue, oldValue);
             } catch (error) {
-                this.lastErrorDetails = {hvId, newValue, oldValue};
+                this.lastErrorDetails = {newValue, oldValue};
                 this.fail(hvId, error);
             }
         });
     }
 
-    fail(hvId: number, error: Error) {
+    fail(hvId: number, error: Error, details?: ErrorDetails) {
         let currentSet = this.watcherSets[hvId];
         if (!currentSet) {
-            throw new Error('incorrect hv ID');
+            throw error;
         }
 
         if (currentSet.catcher) {
-            currentSet.catcher(error, this.lastErrorDetails as ErrorDetails);
+            details = details || this.lastErrorDetails as ErrorDetails;
+            currentSet.catcher(error, details);
             this.lastErrorDetails = null;
             return;
         }
