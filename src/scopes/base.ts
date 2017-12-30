@@ -1,5 +1,5 @@
 import {HyperValue} from '../core/core';
-import {globalDispatcher, WatcherFn} from '../core/dispatcher';
+import {globalDispatcher, WatcherFn, Catcher} from '../core/dispatcher';
 import {IdDict} from '../utils/list';
 import {scopeDebug} from '../debug';
 
@@ -32,6 +32,14 @@ export class BaseScope {
         }
         delete watcherSet[watcherId];
         globalDispatcher.unwatch(hvId, watcherId);
+    }
+
+    catch(hv: HyperValue<any> | number, catcher: Catcher) {
+        const hvId = typeof hv === 'number'
+            ? hv
+            : hv.id;
+
+        globalDispatcher.catch(hvId, catcher);
     }
 
     free() {

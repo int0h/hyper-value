@@ -43,7 +43,7 @@ export class HvDispatcher {
         currentSet.watchers.del(watcherId);
     }
 
-    catch(hvId: number, fn: Catcher) {
+    catch(hvId: number, catcher: Catcher) {
         let currentSet = this.watcherSets[hvId];
         if (!currentSet) {
             currentSet = {
@@ -52,7 +52,7 @@ export class HvDispatcher {
             };
             this.watcherSets[hvId] = currentSet;
         }
-        currentSet.catcher = fn;
+        currentSet.catcher = catcher;
     }
 
     handle(hvId: number, newValue: any, oldValue: any) {
