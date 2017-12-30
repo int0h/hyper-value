@@ -13,15 +13,17 @@ interface Dep {
 export class HvAsync<T, I> extends HyperValue<T | I> {
     state = new HyperValue('pending') as HyperValue<'pending' | 'resolved' | 'rejected'>;
     private getter: AsyncFn<T>;
+    private setter: AsyncSetter<T> | undefined;
     private hs: BaseScope;
     private callId = 0;
     private currentPromise: Promise<T>;
     private resolver: () => void;
 
-    constructor(hs: BaseScope, initial: I, fn: AsyncFn<T>) {
+    constructor(hs: BaseScope, initial: I, getter: AsyncFn<T>, setter?: AsyncSetter<T>) {
         super(initial);
         this.hs = hs;
-        this.getter = fn;
+        this.getter = getter;
+        this.setter = setter;
         this.initPromise();
         this.init();
     }
@@ -78,6 +80,19 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
 
         watcher();
     }
+
+    s(newValue: T) {
+        if (!this.setter) {
+            super.s(newValue);
+            return;
+        }
+
+        this.state.$ = 'pending';
+        this.setter(newValue).then(value => {
+            this.state.$ = 'resolved';
+            super.s(value);
+        });
+    }
 }
 
 export interface AsyncSetter<T> {
@@ -85,7 +100,7 @@ export interface AsyncSetter<T> {
 }
 
 export class AsyncScope extends BaseScope {
-    async<T, I>(inited: I, getter: AsyncFn<T>/*, setter?: AsyncSetter<T>*/): HvAsync<T, I> {
-        return new HvAsync(this, inited, getter);
+    async<T, I>(inited: I, getter: AsyncFn<T>, setter?: AsyncSetter<T>): HvAsync<T, I> {
+        return new HvAsync(this, inited, getter, setter);
     }
 }
