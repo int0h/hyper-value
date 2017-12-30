@@ -8,12 +8,15 @@ export class BaseScope {
     private watcherList: IdDict<IdDict<number>> = {};
     private children: BaseScope[] = [];
 
-    watch<T>(hv: HyperValue<T>, fn: WatcherFn<T>): number {
-        const watcherId = globalDispatcher.watch(hv.id, fn);
-        let watcherSet = this.watcherList[hv.id];
+    watch<T>(hv: HyperValue<any> | number, fn: WatcherFn<T>): number {
+        const hvId = typeof hv === 'number'
+            ? hv
+            : hv.id;
+        const watcherId = globalDispatcher.watch(hvId, fn);
+        let watcherSet = this.watcherList[hvId];
         if (!watcherSet) {
             watcherSet = {};
-            this.watcherList[hv.id] = watcherSet;
+            this.watcherList[hvId] = watcherSet;
         }
         watcherSet[watcherId] = watcherId;
         return watcherId;
