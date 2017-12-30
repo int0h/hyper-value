@@ -1,5 +1,4 @@
 import {HyperValue, record} from '../core';
-import {globalDispatcher} from '../core/dispatcher';
 import {BaseScope} from './base';
 
 interface Dep {
@@ -31,7 +30,7 @@ export class AutoScope extends BaseScope {
             try {
                 [value, deps] = record(fn);
             } catch (error) {
-                globalDispatcher.fail(hv.id, error, {
+                this.fail(hv, error, {
                     oldValue: hv.$
                 });
                 depList = watchDeps(depList.map(dep => dep.hvId));

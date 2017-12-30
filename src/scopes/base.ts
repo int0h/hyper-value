@@ -1,5 +1,5 @@
 import {HyperValue} from '../core/core';
-import {globalDispatcher, WatcherFn, Catcher} from '../core/dispatcher';
+import {globalDispatcher, WatcherFn, Catcher, ErrorDetails} from '../core/dispatcher';
 import {IdDict} from '../utils/list';
 import {scopeDebug} from '../debug';
 
@@ -43,6 +43,14 @@ export class BaseScope {
             : hv.id;
 
         globalDispatcher.catch(hvId, catcher);
+    }
+
+    fail(hv: HyperValue<any> | number, error: Error, details?: ErrorDetails) {
+        const hvId = typeof hv === 'number'
+            ? hv
+            : hv.id;
+
+        globalDispatcher.fail(hvId, error, details);
     }
 
     free() {
