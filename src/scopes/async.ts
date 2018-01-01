@@ -1,18 +1,20 @@
 import {HyperValue, recordAsync, PromiseWrapper} from '../core';
 import {BaseScope} from './base';
 
-export interface AsyncFn<T> {
-    (w: PromiseWrapper): Promise<T>;
-}
-
 interface Dep {
     watcherId: number;
     hvId: number;
 }
 
+export interface HvAsyncParams<T, I> {
+    initial?: I;
+    get?: AsyncGetter<T>;
+    set?: AsyncSetter<T>;
+}
+
 export class HvAsync<T, I> extends HyperValue<T | I> {
     state = new HyperValue('pending') as HyperValue<'pending' | 'resolved' | 'rejected'>;
-    private getter: AsyncFn<T>;
+    private getter: AsyncGetter<T> | undefined;
     private setter: AsyncSetter<T> | undefined;
     private hs: BaseScope;
     private callId = 0;
@@ -20,11 +22,11 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
     private resolver: () => void;
     private rejecter: (error: Error) => void;
 
-    constructor(hs: BaseScope, initial: I, getter: AsyncFn<T>, setter?: AsyncSetter<T>) {
-        super(initial);
+    constructor(hs: BaseScope, params: HvAsyncParams<T, I>) {
+        super(params.initial as I);
         this.hs = hs;
-        this.getter = getter;
-        this.setter = setter;
+        this.getter = params.get;
+        this.setter = params.set;
         this.initPromise();
         this.init();
     }
@@ -73,6 +75,10 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
     }
 
     private init() {
+        if (!this.getter) {
+            return;
+        }
+
         let depList = [] as Dep[];
 
         const watchDeps = (hvIdList: number[]) => {
@@ -90,7 +96,8 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
             }
 
             recordAsync(w => {
-                return this.fetch(() => this.getter(w));
+                const getter = this.getter as AsyncGetter<T>;
+                return this.fetch(() => getter(w));
             }, deps => {
                 depList = depList.concat(watchDeps(deps.map(hv => hv.id)));
             })
@@ -109,11 +116,17 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
         }
 
         this.state.$ = 'pending';
-        this.setter(newValue).then(value => {
-            this.state.$ = 'resolved';
-            super.s(value);
-        });
+        this.fetch(() => {
+            return (this.setter as AsyncSetter<T>)(newValue);
+        }).then(value => {
+                this.state.$ = 'resolved';
+                super.s(value);
+            });
     }
+}
+
+export interface AsyncGetter<T> {
+    (w: PromiseWrapper): Promise<T>;
 }
 
 export interface AsyncSetter<T> {
@@ -121,7 +134,7 @@ export interface AsyncSetter<T> {
 }
 
 export class AsyncScope extends BaseScope {
-    async<T, I>(inited: I, getter: AsyncFn<T>, setter?: AsyncSetter<T>): HvAsync<T, I> {
-        return new HvAsync(this, inited, getter, setter);
+    async<T, I = undefined>(params: HvAsyncParams<T, I>): HvAsync<T, I> {
+        return new HvAsync(this, params);
     }
 }

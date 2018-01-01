@@ -21,9 +21,9 @@ async function throwDelayed(msg: string, ms: number): Promise<void> {
 test('hvAsync basic', async t => {
     const hs = new AsyncScope();
     const a = new HyperValue(0);
-    const b = await hs.async(null, async w => {
+    const b = await hs.async({get: async w => {
         return await w(returnDelayed(a.g() * 2, 50));
-    }).wait();
+    }}).wait();
 
     t.is(b.g(), 0);
     a.s(2);
@@ -41,10 +41,10 @@ test('hvAsync ignore parallel writting', async t => {
 
     setTimeout(() => b.s(1), 10);
 
-    const c = await hs.async(null, async w => {
+    const c = await hs.async({get: async w => {
         callCount++;
         return await w(returnDelayed(a.g() * 2, 50));
-    }).wait();
+    }}).wait();
 
     t.is(b.g(), 1);
     t.is(c.g(), 0);
@@ -61,12 +61,12 @@ test('hvAsync multi hv capturing', async t => {
     const a = new HyperValue(0);
     const b = new HyperValue(0);
 
-    const c = await hs.async(null, async w => {
+    const c = await hs.async({get: async w => {
         const argA = a.g() * 2;
         await w(returnDelayed(argA, 100));
         const argB = argA + b.g() * 2;
         return await w(returnDelayed(argB, 100));
-    }).wait();
+    }}).wait();
 
     t.is(c.g(), 0);
     a.s(2);
@@ -85,11 +85,11 @@ test('hvAsync multi hv capturing', async t => {
 
 test('hvAsync sync', async t => {
     const hs = new AsyncScope();
-    const a = hs.async(null, async w => {
+    const a = hs.async({get: async w => {
         return await w(returnDelayed(3, 100));
-    });
+    }});
 
-    t.is(a.g(), null);
+    t.is(a.g(), undefined);
     await wait(150);
     t.is(a.g(), 3);
     t.end();
@@ -97,9 +97,9 @@ test('hvAsync sync', async t => {
 
 test('hvAsync sync: init value', async t => {
     const hs = new AsyncScope();
-    const a = hs.async(1, async w => {
+    const a = hs.async({initial: 1, get: async w => {
         return await w(returnDelayed(3, 100));
-    });
+    }});
 
     t.is(a.g(), 1);
     await wait(150);
@@ -112,14 +112,14 @@ test('hvAsync: proper order of values', async t => {
     const hs = new AsyncScope();
     const a = new HyperValue(5);
 
-    const b = hs.async(null, async w => {
+    const b = hs.async({get: async w => {
         return calledTimes++ < 1
             ? await w(returnDelayed(a.$ * 1, 100))
             : await w(returnDelayed(a.$ * 2, 10));
-    });
+    }});
 
     a.$ = 10;
-    t.is(b.g(), null);
+    t.is(b.g(), undefined);
     await wait(20);
     t.is(b.$, 20);
     await wait(150);
@@ -130,11 +130,11 @@ test('hvAsync: proper order of values', async t => {
 test('hvAsync: state', async t => {
     const hs = new AsyncScope();
 
-    const a = hs.async(null, async w => {
+    const a = hs.async({get: async w => {
         return await w(returnDelayed(1, 10));
-    });
+    }});
 
-    t.is(a.g(), null);
+    t.is(a.g(), undefined);
     t.is(a.state.$, 'pending');
     await wait(20);
     t.is(a.g(), 1);
@@ -145,14 +145,14 @@ test('hvAsync: state', async t => {
 test('hvAsync: throw', async t => {
     const hs = new AsyncScope();
 
-    const a = hs.async(null, async w => {
+    const a = hs.async({get: async w => {
         return await w(throwDelayed('err', 10));
-    });
+    }});
 
-    t.is(a.g(), null);
+    t.is(a.g(), undefined);
     t.is(a.state.$, 'pending');
     await wait(20);
-    t.is(a.g(), null);
+    t.is(a.g(), undefined);
     t.is(a.state.$, 'rejected');
     t.end();
 });
@@ -162,9 +162,9 @@ test('hvAsync: throw catch (async-await style)', async t => {
 
     const hs = new AsyncScope();
 
-    const a = hs.async(null, async w => {
+    const a = hs.async({get: async w => {
         return await w(throwDelayed('err', 10));
-    });
+    }});
 
     try {
         await a.wait();
@@ -179,9 +179,9 @@ test('hvAsync: throw catch (promise style)', async t => {
 
     const hs = new AsyncScope();
 
-    const a = hs.async(null, async w => {
+    const a = hs.async({get: async w => {
         return await w(throwDelayed('err', 10));
-    });
+    }});
 
     a.wait().catch(err => {
         t.is(err.message, 'err');
@@ -194,9 +194,9 @@ test('hvAsync: hv catch', async t => {
 
     const hs = new AsyncScope();
 
-    const a = hs.async(null, async w => {
+    const a = hs.async({get: async w => {
         return await w(throwDelayed('err', 10));
-    });
+    }});
 
     hs.catch(a, error => {
         t.is(error.message, 'err');
@@ -204,4 +204,15 @@ test('hvAsync: hv catch', async t => {
     });
 
     await wait(20);
+});
+
+test('hvAsync: getter is optional', async t => {
+    const hs = new AsyncScope();
+
+    const a = hs.async({initial: 1});
+
+    t.is(a.$, 1);
+    a.$ = 2;
+    t.is(a.$, 2);
+    t.end();
 });
