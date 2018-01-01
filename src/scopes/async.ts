@@ -59,6 +59,7 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
                         this.state.$ = 'rejected';
                         this.rejecter(error);
                         this.initPromise();
+                        this.hs.fail(this, error);
                     }
 
                     reject(error);

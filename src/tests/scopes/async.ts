@@ -83,7 +83,6 @@ test('hvAsync multi hv capturing', async t => {
     t.end();
 });
 
-
 test('hvAsync sync', async t => {
     const hs = new AsyncScope();
     const a = hs.async(null, async w => {
@@ -143,7 +142,6 @@ test('hvAsync: state', async t => {
     t.end();
 });
 
-
 test('hvAsync: throw', async t => {
     const hs = new AsyncScope();
 
@@ -160,6 +158,8 @@ test('hvAsync: throw', async t => {
 });
 
 test('hvAsync: throw catch (async-await style)', async t => {
+    t.plan(2);
+
     const hs = new AsyncScope();
 
     const a = hs.async(null, async w => {
@@ -172,12 +172,11 @@ test('hvAsync: throw catch (async-await style)', async t => {
         t.is(err.message, 'err');
         t.pass();
     }
-
-    t.end();
 });
 
-
 test('hvAsync: throw catch (promise style)', async t => {
+    t.plan(2);
+
     const hs = new AsyncScope();
 
     const a = hs.async(null, async w => {
@@ -188,6 +187,21 @@ test('hvAsync: throw catch (promise style)', async t => {
         t.is(err.message, 'err');
         t.pass();
     });
+});
 
-    t.end();
+test('hvAsync: hv catch', async t => {
+    t.plan(2);
+
+    const hs = new AsyncScope();
+
+    const a = hs.async(null, async w => {
+        return await w(throwDelayed('err', 10));
+    });
+
+    hs.catch(a, error => {
+        t.is(error.message, 'err');
+        t.pass();
+    });
+
+    await wait(20);
 });
