@@ -13,6 +13,11 @@ async function returnDelayed<T>(value: T, ms: number): Promise<T> {
     return value;
 }
 
+async function throwDelayed(msg: string, ms: number): Promise<void> {
+    await wait(ms);
+    throw new Error(msg);
+}
+
 test('hvAsync basic', async t => {
     const hs = new AsyncScope();
     const a = new HyperValue(0);
@@ -135,5 +140,54 @@ test('hvAsync: state', async t => {
     await wait(20);
     t.is(a.g(), 1);
     t.is(a.state.$, 'resolved');
+    t.end();
+});
+
+
+test('hvAsync: throw', async t => {
+    const hs = new AsyncScope();
+
+    const a = hs.async(null, async w => {
+        return await w(throwDelayed('err', 10));
+    });
+
+    t.is(a.g(), null);
+    t.is(a.state.$, 'pending');
+    await wait(20);
+    t.is(a.g(), null);
+    t.is(a.state.$, 'rejected');
+    t.end();
+});
+
+test('hvAsync: throw catch (async-await style)', async t => {
+    const hs = new AsyncScope();
+
+    const a = hs.async(null, async w => {
+        return await w(throwDelayed('err', 10));
+    });
+
+    try {
+        await a.wait();
+    } catch (err) {
+        t.is(err.message, 'err');
+        t.pass();
+    }
+
+    t.end();
+});
+
+
+test('hvAsync: throw catch (promise style)', async t => {
+    const hs = new AsyncScope();
+
+    const a = hs.async(null, async w => {
+        return await w(throwDelayed('err', 10));
+    });
+
+    a.wait().catch(err => {
+        t.is(err.message, 'err');
+        t.pass();
+    });
+
     t.end();
 });

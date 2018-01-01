@@ -18,6 +18,7 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
     private callId = 0;
     private currentPromise: Promise<T>;
     private resolver: () => void;
+    private rejecter: (error: Error) => void;
 
     constructor(hs: BaseScope, initial: I, getter: AsyncFn<T>, setter?: AsyncSetter<T>) {
         super(initial);
@@ -29,28 +30,40 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
     }
 
     private initPromise() {
-        this.currentPromise = new Promise(resolve => {
+        this.currentPromise = new Promise((resolve, reject) => {
             this.resolver = resolve;
+            this.rejecter = reject;
         });
     }
 
     private fetch(fn: () => Promise<T>): Promise<T> {
-        return new Promise(resolve => {
+        return new Promise((resolve, reject) => {
             this.callId++;
             const id = this.callId;
 
             this.state.$ = 'pending';
 
-            fn().then(value => {
-                if (this.callId === id) {
-                    this.$ = value;
-                    this.state.$ = 'resolved';
-                    this.resolver();
-                    this.initPromise();
-                }
+            fn().then(
+                value => {
+                    if (this.callId === id) {
+                        this.$ = value;
+                        this.state.$ = 'resolved';
+                        this.resolver();
+                        this.initPromise();
+                    }
 
-                resolve(value);
-            });
+                    resolve(value);
+                },
+                error => {
+                    if (this.callId === id) {
+                        this.state.$ = 'rejected';
+                        this.rejecter(error);
+                        this.initPromise();
+                    }
+
+                    reject(error);
+                }
+            );
         });
     }
 
@@ -58,8 +71,17 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
         return this.currentPromise.then(() => this as any as HvAsync<T, T>);
     }
 
-    init() {
+    private init() {
         let depList = [] as Dep[];
+
+        const watchDeps = (hvIdList: number[]) => {
+            return hvIdList.map(hvId => {
+                return {
+                    hvId,
+                    watcherId: this.hs.watch(hvId, watcher)
+                };
+            });
+        };
 
         const watcher = () => {
             for (const dep of depList) {
@@ -69,12 +91,10 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
             recordAsync(w => {
                 return this.fetch(() => this.getter(w));
             }, deps => {
-                depList = depList.concat(deps.map(hv => {
-                    return {
-                        hvId: hv.id,
-                        watcherId: this.hs.watch(hv, watcher)
-                    };
-                }));
+                depList = depList.concat(watchDeps(deps.map(hv => hv.id)));
+            })
+            .catch(() => {
+                depList = watchDeps(depList.map(dep => dep.hvId));
             });
         };
 
