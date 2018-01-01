@@ -9,7 +9,8 @@ interface Dep {
 export interface HvAsyncParams<T, I> {
     initial?: I;
     get?: AsyncGetter<T>;
-    set?: AsyncSetter<T>;
+    set?: AsyncSetterApprove<T>;
+    update?: AsyncSetter<T>;
 }
 
 export class HvAsync<T, I> extends HyperValue<T | I> {
@@ -26,7 +27,18 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
         super(params.initial as I);
         this.hs = hs;
         this.getter = params.get;
-        this.setter = params.set;
+        if (params.set && params.update) {
+            throw new Error('both set and update cannot be defined');
+        }
+        if (params.update) {
+            this.setter = params.update;
+        }
+        if (params.set) {
+            this.setter = value => {
+                const setter = params.set as AsyncSetterApprove<T>;
+                return setter(value).then(() => value);
+            };
+        }
         this.initPromise();
         this.init();
     }
@@ -129,6 +141,10 @@ export interface AsyncGetter<T> {
 
 export interface AsyncSetter<T> {
     (value: T): Promise<T>;
+}
+
+export interface AsyncSetterApprove<T> {
+    (value: T): Promise<void>;
 }
 
 export class AsyncScope extends BaseScope {
