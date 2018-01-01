@@ -216,3 +216,21 @@ test('hvAsync: getter is optional', async t => {
     t.is(a.$, 2);
     t.end();
 });
+
+test('hvAsync: setter basics', async t => {
+    const hs = new AsyncScope();
+
+    const a = hs.async({set: async () => returnDelayed(42, 10)});
+
+    t.is(a.$, undefined);
+    t.is(a.state.$, 'resolved');
+    await wait(20);
+    t.is(a.$, undefined);
+    a.$ = 2;
+    t.is(a.state.$, 'pending');
+    t.is(a.$, undefined);
+    await wait(20);
+    t.is(a.state.$, 'resolved');
+    t.is(a.$, 42);
+    t.end();
+});

@@ -13,7 +13,7 @@ export interface HvAsyncParams<T, I> {
 }
 
 export class HvAsync<T, I> extends HyperValue<T | I> {
-    state = new HyperValue('pending') as HyperValue<'pending' | 'resolved' | 'rejected'>;
+    state = new HyperValue('resolved') as HyperValue<'pending' | 'resolved' | 'rejected'>;
     private getter: AsyncGetter<T> | undefined;
     private setter: AsyncSetter<T> | undefined;
     private hs: BaseScope;
@@ -48,7 +48,7 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
             fn().then(
                 value => {
                     if (this.callId === id) {
-                        this.$ = value;
+                        super.s(value);
                         this.state.$ = 'resolved';
                         this.resolver();
                         this.initPromise();
@@ -119,9 +119,9 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
         this.fetch(() => {
             return (this.setter as AsyncSetter<T>)(newValue);
         }).then(value => {
-                this.state.$ = 'resolved';
-                super.s(value);
-            });
+            this.state.$ = 'resolved';
+            super.s(value);
+        });
     }
 }
 
