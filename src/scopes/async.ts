@@ -115,11 +115,9 @@ export class HvAsync<T, I> extends HyperValue<T | I> {
             return;
         }
 
-        this.state.$ = 'pending';
         this.fetch(() => {
             return (this.setter as AsyncSetter<T>)(newValue);
         }).then(value => {
-            this.state.$ = 'resolved';
             super.s(value);
         });
     }
