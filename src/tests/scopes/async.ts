@@ -252,3 +252,13 @@ test('hvAsync: setter basics', async t => {
     t.is(a.$, 2);
     t.end();
 });
+
+test('hvAsync: set and update are not be set together', async t => {
+    const hs = new AsyncScope();
+
+    t.throws(() => {
+        hs.async({set: async () => wait(10), update: async () => wait(10)});
+    });
+
+    t.end();
+});
