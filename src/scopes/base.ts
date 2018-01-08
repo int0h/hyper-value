@@ -8,7 +8,7 @@ export class BaseScope {
     private watcherList: IdDict<IdDict<number>> = {};
     private children: BaseScope[] = [];
 
-    watch<T>(hv: HyperValue<any> | number, fn: WatcherFn<T>): number {
+    watch<T>(hv: HyperValue<T> | number, fn: WatcherFn<T>): number {
         const hvId = typeof hv === 'number'
             ? hv
             : hv.id;
