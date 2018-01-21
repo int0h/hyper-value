@@ -76,7 +76,7 @@ export class ArrayScope extends Base {
                     return i;
                 }
             }
-            return null;
+            return -1;
         });
     }
 
