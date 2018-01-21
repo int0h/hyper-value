@@ -4,7 +4,6 @@
 
         {
             "type": "node",
-            "runtimeExecutable": "${env:HOME}/.nvm/versions/node/v8.9.0/bin/node",
             "request": "launch",
             "name": "Launch Program",
             "runtimeArgs": [

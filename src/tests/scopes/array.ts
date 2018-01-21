@@ -119,17 +119,17 @@ test('array insert', t => {
     const hs = new ArrayScope();
     const arr = new HyperValue([1, 2, 3]);
 
-    hs.insert(arr, 0, 0); // insert in the beginning
-    t.deepEqual(arr.$, [0, 1, 2, 3]);
+    hs.insert(arr, 0, 0);
+    t.deepEqual(arr.$, [0, 1, 2, 3], 'insert in the beginning');
 
-    hs.insert(arr, Infinity, 4); // insert in the end
-    t.deepEqual(arr.$, [0, 1, 2, 3, 4]);
+    hs.insert(arr, Infinity, 4);
+    t.deepEqual(arr.$, [0, 1, 2, 3, 4], 'insert in the end');
 
-    hs.insert(arr, -1, 3.5); // negative index
-    t.deepEqual(arr.$, [0, 1, 2, 3, 3.5, 4]);
+    hs.insert(arr, -1, 3.5);
+    t.deepEqual(arr.$, [0, 1, 2, 3, 3.5, 4], 'negative index');
 
-    hs.insert(arr, 0, [-2, -1]); // insert a few
-    t.deepEqual(arr.$, [-2, -1, 0, 1, 2, 3, 3.5, 4]);
+    hs.insert(arr, 0, [-2, -1]);
+    t.deepEqual(arr.$, [-2, -1, 0, 1, 2, 3, 3.5, 4], 'insert a few');
 
     t.end();
 });
@@ -138,14 +138,32 @@ test('array remove', t => {
     const hs = new ArrayScope();
     const arr = new HyperValue([1, 2, 3, 4, 5]);
 
-    hs.remove(arr, 0, 1); // remove from the beginning
-    t.deepEqual(arr.$, [2, 3, 4, 5]);
+    hs.remove(arr, 0, 1);
+    t.deepEqual(arr.$, [2, 3, 4, 5], 'remove from the beginning');
 
-    hs.remove(arr, -1, 1); // remove from in the end
-    t.deepEqual(arr.$, [2, 3, 4]);
+    hs.remove(arr, -1, 1);
+    t.deepEqual(arr.$, [2, 3, 4], 'remove from in the end');
 
-    hs.remove(arr, 0, 2); // remove a few
-    t.deepEqual(arr.$, [4]);
+    hs.remove(arr, 0, 2);
+    t.deepEqual(arr.$, [4], 'remove a few');
+
+    t.end();
+});
+
+test('array sort', t => {
+    const hs = new ArrayScope();
+    const arr = new HyperValue([4, 3, 2, 5, 1]);
+    const sorted = hs.sort(arr);
+
+    t.deepEqual(sorted.$, [1, 2, 3, 4, 5]);
+
+    arr.$ = [7, 9, 8];
+    t.deepEqual(sorted.$, [7, 8, 9]);
+
+    const descSorted = hs.sort(arr, (a, b) => b - a);
+    t.deepEqual(descSorted.$, [9, 8, 7]);
+
+    t.deepEqual(arr.$, [7, 9, 8], 'make sure that original array is kept intact');
 
     t.end();
 });

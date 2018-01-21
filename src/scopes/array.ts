@@ -122,4 +122,12 @@ export class ArrayScope extends Base {
         hv.$ = newArray;
     }
 
+    sort<T>(hv: HyperValue<T[]>, sortFn?: (a: T, b: T) => number): HyperValue<T[]> {
+        return this.auto(() => {
+            const array = hv.$.slice();
+            array.sort(sortFn);
+            return array;
+        });
+    }
+
 }
