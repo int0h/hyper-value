@@ -77,10 +77,39 @@ test('array reduce', t => {
     hv.$ = [1, 2, 3, 4];
     t.is(sum.$, 10);
 
+    const array = hs.reduce(hv, (acc: number[], i) => acc.concat(i), []);
+    t.deepEqual(array.$, [1, 2, 3, 4]);
+
     t.end();
 });
 
-test('array concat2', t => {
+test('array find', t => {
+    const hs = new ArrayScope();
+    const hv = new HyperValue([1, 2, 3]);
+    const found = hs.find(hv, i => i ** 2 === 4);
+
+    t.is(found.$, 2);
+
+    hv.$ = [1, 3, 4];
+    t.is(found.$, null);
+
+    t.end();
+});
+
+test('array findIndex', t => {
+    const hs = new ArrayScope();
+    const hv = new HyperValue([1, 2, 3]);
+    const found = hs.findIndex(hv, i => i ** 2 === 4);
+
+    t.is(found.$, 1);
+
+    hv.$ = [1, 3, 4];
+    t.is(found.$, -1);
+
+    t.end();
+});
+
+test('array concat', t => {
     const hs = new ArrayScope();
     const a1 = new HyperValue([1, 2, 3]);
     const a2 = new HyperValue([4, 5, 6]);
@@ -111,6 +140,12 @@ test('array slice', t => {
 
     e.$ = 5;
     t.deepEqual(sliced.$, [3, 4, 5]);
+
+    const slicedFromStart = hs.slice(arr, s);
+    t.deepEqual(slicedFromStart.$, [3, 4, 5]);
+
+    const cloned = hs.slice(arr);
+    t.deepEqual(cloned.$, [1, 2, 3, 4, 5]);
 
     t.end();
 });
