@@ -127,6 +127,23 @@ test('hvAsync: proper order of values', async t => {
     t.end();
 });
 
+test('hvAsync: proper order of values #2', async t => {
+    const hs = new AsyncScope();
+    const a = new HyperValue(5);
+
+    const b = hs.async({get: async w => {
+        return w(returnDelayed(a.$ * 2, 10));
+    }});
+
+    a.$ = 10;
+    a.$ = 20;
+    a.$ = 30;
+    t.is(b.g(), undefined);
+    await wait(20);
+    t.is(b.$, 60);
+    t.end();
+});
+
 test('hvAsync: state', async t => {
     const hs = new AsyncScope();
 
