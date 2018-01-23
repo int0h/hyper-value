@@ -4,4 +4,5 @@ export {ArrayScope} from './array';
 export {AsyncScope} from './async';
 export {CastScope} from './cast';
 export {FullScope} from './full';
+export {ObjectScope} from './object';
 export {ProxyScope} from './proxy';
