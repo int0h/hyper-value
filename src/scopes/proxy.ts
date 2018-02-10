@@ -10,7 +10,7 @@ export class ProxyScope extends AutoScope {
         const result = this.auto(() => getter(hv.$));
 
         if (setter) {
-            this.bind(hv, () => setter(result.$));
+            this.bind(hv, () => setter(result.$), false);
         }
 
         return result;

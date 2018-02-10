@@ -7,19 +7,19 @@ interface Dep {
 }
 
 export class AutoScope extends BaseScope {
-    bind<T>(hv: HyperValue<T>, fn: () => T) {
+    bind<T>(hv: HyperValue<T>, fn: () => T, init = true) {
         let depList = [] as Dep[];
 
         const watchDeps = (hvIdList: number[]) => {
             return hvIdList.map(hvId => {
                 return {
                     hvId,
-                    watcherId: this.watch(hvId, watcher)
+                    watcherId: this.watch(hvId, watcher.bind(null, true))
                 };
             });
         };
 
-        const watcher = () => {
+        const watcher = (needInit: boolean) => {
             // do we need it still?
             for (const dep of depList) {
                 this.unwatch(dep.hvId, dep.watcherId, true);
@@ -39,16 +39,18 @@ export class AutoScope extends BaseScope {
 
             depList = watchDeps(deps.map(hv => hv.id));
 
-            hv.s(value);
+            if (needInit) {
+                hv.s(value);
+            }
         };
 
-        watcher();
+        watcher(init);
     }
 
 
     auto<T>(fn: () => T): HyperValue<T> {
         const hv = new HyperValue(null as any as T);
-        this.bind(hv, fn);
+        this.bind(hv, fn, true);
         return hv;
     }
 }

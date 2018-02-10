@@ -26,3 +26,24 @@ test('proxy write', t => {
     t.deepEqual(hv.$, [7, 8, 9]);
     t.end();
 });
+
+test('setting proxy must not write to target hv', t => {
+    const hs = new ProxyScope();
+    const hv = new HyperValue(0);
+    let changed = false;
+
+    hs.watch(hv, () => {
+        if (!changed) {
+            t.fail('hv was updated unexpectedly');
+        }
+    });
+
+    const proxy = hs.proxy(hv, n => n * 2, o => o / 2);
+    t.is(proxy.$, 0);
+
+    changed = true;
+    proxy.$ = 8;
+    t.is(hv.$, 4);
+
+    t.end();
+});
