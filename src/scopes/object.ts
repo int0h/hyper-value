@@ -10,8 +10,8 @@ export class ObjectScope extends ProxyScope {
                 return {
                     ...hv.$ as object,
                     [propertyName]: value
-                }
+                } as T;
             }
-        )
+        );
     }
 }
