@@ -1,10 +1,10 @@
 import {addToRecords} from './record';
 import {globalDispatcher} from './dispatcher';
-import {hvDebug} from '../debug';
+import { traceHv} from '../debug';
 
 let currentId = 0;
 
-@hvDebug
+//@hvDebug
 export class HyperValue<T> {
     private value: T;
     private newValue: T;
@@ -25,8 +25,13 @@ export class HyperValue<T> {
         return this.value;
     }
 
+    @traceHv
     s(newValue: T) {
         if (this.updating) {
+            return;
+        }
+
+        if (newValue === this.value) {
             return;
         }
 

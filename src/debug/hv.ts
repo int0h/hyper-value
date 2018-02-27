@@ -1,4 +1,5 @@
 import {HyperValue} from '../core';
+import {Tracer, createReportIframe} from 'debug-tools';
 
 interface HistoryItem {
     depth: number;
@@ -45,6 +46,12 @@ declare const window: any;
 const glob = typeof global !== 'undefined'
     ? global
     : window;
+
+export const tracer = new Tracer();
+glob.tracer = tracer;
+glob.createReportIframe = createReportIframe;
+
+export const traceHv = tracer.traceMethod((hv: HyperValue<any>) => String(hv.id));
 
 glob.getHvHistory = () => {
     return 'log:\n' + history.map(item => {

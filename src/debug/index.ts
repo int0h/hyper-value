@@ -29,4 +29,4 @@ function outputWarns() {
 }
 
 export {scopeDebug} from './scope';
-export {hvDebug} from './hv';
+export {hvDebug, traceHv, tracer} from './hv';
