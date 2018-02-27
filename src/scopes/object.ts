@@ -14,4 +14,18 @@ export class ObjectScope extends ProxyScope {
             }
         );
     }
+
+    setProp<T>(hv: HyperValue<T[]>, propertyName: number, value: T): void;
+    setProp<T extends object, K extends keyof T>(hv: HyperValue<T>, propertyName: K, value: T[K]): void;
+    setProp<T extends object, K extends keyof T>(hv: HyperValue<T>, propertyName: K, value: T[K]) {
+        const obj = hv.$;
+        obj[propertyName] = value;
+        hv.$ = obj;
+    }
+
+    getProp<T>(hv: HyperValue<T[]>, propertyName: number): T;
+    getProp<T extends object, K extends keyof T>(hv: HyperValue<T>, propertyName: K): T[K];
+    getProp<T extends object, K extends keyof T>(hv: HyperValue<T>, propertyName: K): T[K] {
+        return hv.$[propertyName];
+    }
 }
