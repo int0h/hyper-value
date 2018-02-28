@@ -2,4 +2,5 @@
 src
 .travis.yml
 tsconfig.json
-tslint.jsno
+tslint.json
+.nyc_output

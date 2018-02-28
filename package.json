@@ -15,7 +15,8 @@
     "tape": "^4.8.0",
     "tslint": "^5.7.0",
     "typescript": "^2.5.3",
-    "weak": "^1.0.1"
+    "weak": "^1.0.1",
+    "@types/weak": "^1.0.0"
   },
   "keywords": [],
   "typings": "./types/index.d.ts",
@@ -23,13 +24,13 @@
     "test-report": "node_modules/.bin/nyc --reporter=lcov node --expose-gc ./node_modules/.bin/tape ./dist/tests/**/*.js | ./node_modules/.bin/tap-spec",
     "test": "node_modules/.bin/nyc --console=detail node --expose-gc ./node_modules/.bin/tape ./dist/tests/**/*.js | ./node_modules/.bin/tap-spec"
   },
-  "dependencies": {
-    "@types/weak": "^1.0.0"
-  },
   "nyc": {
     "exclude": [
       "**/src/tests/**/*.*",
       "**/dist/tests/**/*.*"
     ]
+  },
+  "dependencies": {
+    "debug-tools": "git+https://github.com/int0h/debug-tools.git"
   }
 }
