@@ -3,16 +3,13 @@
     "configurations": [
 
         {
+            "name": "Current TS File",
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
-            "runtimeArgs": [
-                "--expose-gc"
-            ],
-            "program": "${file}",
-            "outFiles": [
-                "${workspaceFolder}/dist/**/*.js"
-            ]
+            "program": "${workspaceRoot}/node_modules/ts-node/dist/bin.js",
+            "args": ["${relativeFile}"],
+            "cwd": "${workspaceRoot}",
+            "protocol": "inspector"
         }
     ]
 }

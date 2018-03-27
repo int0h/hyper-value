@@ -31,7 +31,7 @@ export function bind<T>(hs: HyperScope, hv: HyperValue<T>, fn: () => T, init = t
         try {
             [value, deps] = record(fn);
         } catch (error) {
-            this.fail(hv, error, {
+            hs.fail(hv, error, {
                 oldValue: hv.$
             });
             depList = watchDeps(depList.map(dep => dep.hvId));

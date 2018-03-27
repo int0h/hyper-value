@@ -1,0 +1,10 @@
+import './array/test';
+import './auto/test';
+import './bind/test';
+import './cast/test';
+import './catch/test';
+import './prop/test';
+import './proxy/test';
+import './read/test';
+import './unwatch/test';
+import './watch/test';

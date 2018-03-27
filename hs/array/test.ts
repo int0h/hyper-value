@@ -1,0 +1,13 @@
+import './concat/test';
+import './every/test';
+import './filter/test';
+import './find/test';
+import './findIndex/test';
+import './insert/test';
+import './length/test';
+import './map/test';
+import './reduce/test';
+import './remove/test';
+import './slice/test';
+import './some/test';
+import './sort/test';
