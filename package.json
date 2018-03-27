@@ -9,14 +9,15 @@
   "devDependencies": {
     "@types/node": "^8.0.53",
     "@types/tape": "^4.2.31",
+    "@types/weak": "^1.0.0",
     "coveralls": "^2.13.1",
     "nyc": "^11.1.0",
     "tap-spec": "^4.1.1",
     "tape": "^4.8.0",
     "tslint": "^5.7.0",
+    "typedoc": "^0.11.1",
     "typescript": "^2.5.3",
-    "weak": "^1.0.1",
-    "@types/weak": "^1.0.0"
+    "weak": "^1.0.1"
   },
   "keywords": [],
   "typings": "./types/index.d.ts",

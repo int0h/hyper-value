@@ -1,4 +1,4 @@
-export {BaseScope} from './base';
+export {BaseScope, BaseScope as HyperScope} from './base';
 export {AutoScope} from './auto';
 export {ArrayScope} from './array';
 export {AsyncScope} from './async';

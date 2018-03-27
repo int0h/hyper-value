@@ -4,7 +4,7 @@ import { traceHv} from '../debug';
 
 let currentId = 0;
 
-//@hvDebug
+// @hvDebug
 export class HyperValue<T> {
     private value: T;
     private newValue: T;
