@@ -6,9 +6,11 @@
         "moduleResolution": "node",
         "module": "commonjs",
         "inlineSourceMap": true,
+        "inlineSources": true,
         "typeRoots": [
             "./node_modules/@types"
         ],
+        "outDir": "./dist",
         "declaration": true,
         "lib": [
             "es6"
@@ -18,7 +20,8 @@
         "experimentalDecorators": true
     },
     "include": [
-        "./index.ts",
-        "./hs/**/*.ts"
+        "./src/all.ts",
+        "./src/index.ts",
+        "./src/hs/**/index.ts"
     ]
 }

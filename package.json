@@ -1,6 +1,6 @@
 {
   "name": "hyper-value",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "",
   "main": "./dist/index.js",
   "repository": "",
@@ -23,13 +23,8 @@
   "keywords": [],
   "scripts": {
     "test-report": "node_modules/.bin/nyc --reporter=lcov node --expose-gc ./node_modules/.bin/tape ./dist/tests/**/*.js | ./node_modules/.bin/tap-spec",
-    "test": "nyc -e '.ts' -n 'hs/**/index.ts' --all ts-node ./tests/index.ts | ./node_modules/.bin/tap-spec"
-  },
-  "nyc": {
-    "exclude": [
-      "**/src/tests/**/*.*",
-      "**/dist/tests/**/*.*"
-    ]
+    "test": "nyc -e '.ts' -n 'src/**/*.ts' --all ts-node ./tests/index.ts | ./node_modules/.bin/tap-spec",
+    "build": "tsc && cp -r ./dist/* ./"
   },
   "dependencies": {
     "debug-tools": "git+https://github.com/int0h/debug-tools.git"

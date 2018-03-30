@@ -34,7 +34,7 @@ export function async<T, I = undefined>(hs: HyperScope, params: HvAsyncParams<T,
     const result = new HyperValue<T | I>(params.initial as I);
     const error = new HyperValue<any>(null);
     let getter: AsyncGetter<T> | undefined;
-    let setter: AsyncSetter<T> | undefined;
+    // let setter: AsyncSetter<T> | undefined;
     let callId = 0;
 
     function fetch(fn: () => Promise<T>): Promise<T> {
@@ -101,15 +101,15 @@ export function async<T, I = undefined>(hs: HyperScope, params: HvAsyncParams<T,
         if (params.set && params.update) {
             throw new Error('both set and update cannot be defined');
         }
-        if (params.update) {
-            setter = params.update;
-        }
-        if (params.set) {
-            setter = value => {
-                const setter = params.set as AsyncSetterApprove<T>;
-                return setter(value).then(() => value);
-            };
-        }
+        // if (params.update) {
+        //     setter = params.update;
+        // }
+        // if (params.set) {
+        //     setter = value => {
+        //         const setter = params.set as AsyncSetterApprove<T>;
+        //         return setter(value).then(() => value);
+        //     };
+        // }
         if (getter) {
             const definedGetter = getter;
             init((w) => fetch(() => definedGetter(w)));
