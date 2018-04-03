@@ -3,6 +3,4 @@ node_js:
   - 8
   - 6
 after_success:
-  - './node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls'
-before_script:
-  - npm install -g typescript && tsc
+  - 'npm run test-report | ./node_modules/.bin/coveralls'
