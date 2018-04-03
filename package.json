@@ -24,7 +24,8 @@
   "scripts": {
     "test-report": "node_modules/.bin/nyc --reporter=lcov node --expose-gc ./node_modules/.bin/tape ./dist/tests/**/*.js | ./node_modules/.bin/tap-spec",
     "test": "nyc -e '.ts' -n 'src/**/*.ts' --all ts-node ./tests/index.ts | ./node_modules/.bin/tap-spec",
-    "build": "tsc && cp -r ./dist/* ./"
+    "build": "tsc && cp -r ./dist/* ./",
+    "gen-docs": "./node_modules/.bin/typedoc --out ./docs --mode modules ./src/all.ts && touch ./docs/.nojekyll"
   },
   "dependencies": {
     "debug-tools": "git+https://github.com/int0h/debug-tools.git"
