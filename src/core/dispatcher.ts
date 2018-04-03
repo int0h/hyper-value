@@ -1,6 +1,14 @@
 import {List, IdDict} from '../utils/list';
 
+/**
+ * a function to be called in helpers like `auto` and `bind`
+ * @typeparam T type of values
+*/
 export interface WatcherFn<T> {
+    /**
+     * @param newValue new value of hyper-value
+     * @param oldValue previous value of hyper-value
+     */
     (newValue: T, oldValue: T): void;
 }
 

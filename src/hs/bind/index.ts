@@ -8,6 +8,15 @@ interface Dep {
     hvId: number;
 }
 
+/**
+ * Works almost the same as `auto` but instead of creating a new hyper-value
+ * it updates existing one.
+ * It gets `fn` result value and keeps track of changes of used hyper-values.
+ * @param hs HyperScope instance
+ * @param hv hyper-value to be updated
+ * @param fn function that computes the value
+ * @param init if set to false it will not set the initial value straight after calling `bind`
+ */
 export function bind<T>(hs: HyperScope, hv: HyperValue<T>, fn: () => T, init = true) {
     let depList = [] as Dep[];
 
