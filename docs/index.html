@@ -1,0 +1,356 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>hyper-value</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">hyper-value</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1> hyper-value</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<h1 id="hyper-value">Hyper-value</h1>
+				<p>This is a library designed to help application data management.</p>
+				<p>At this point it is recommended to use with <a href="https://github.com/int0h/hv-jsx">hv-jsx</a> and <a href="https://github.com/int0h/hv-dom">hv-dom</a>. You can find an introduction tutorial here: <a href="https://medium.com/@int0h/hyper-value-living-data-in-your-application-a54aab68d8b1">https://medium.com/@int0h/hyper-value-living-data-in-your-application-a54aab68d8b1</a></p>
+				<h1 id="demos">Demos</h1>
+				<p><a href="https://github.com/int0h/hv-counter-app">hv-counter-app</a> — simple counter application</p>
+				<p><a href="https://github.com/int0h/hv-todo-list">hv-todo-list</a> — todo-mvc like application</p>
+				<p><a href="https://github.com/int0h/hv-async-app">hv-async-app</a> — async demo</p>
+				<h1 id="structure">Structure</h1>
+				<p>This library consists of the <strong>core</strong> and <strong>heplers</strong>.</p>
+				<p><strong>core</strong> - is a simple wrapper for any javascript value that allows to read / write the value inside. Also it provides a way to watch changes of this value and react to them.</p>
+				<p><strong>helpers</strong> - are some utility functions designed to help with most common use cases. They may (and may not) take a hyper-value as an argument and they may (or may not) return new hyper-values. At this point all helpers are methods of specific <em>HyperScope</em> (it will be described below), but it will likely change in near future.</p>
+				<h3 id="core">Core</h3>
+				<p>To create a hyper-value you can use a <code>HyperValue</code> constructor:</p>
+				<pre><code class="lang-js"><span class="hljs-keyword">import</span> {HyperValue} <span class="hljs-keyword">from</span> <span class="hljs-string">'hyper-value'</span>;
+<span class="hljs-keyword">const</span> myHyperValue = <span class="hljs-keyword">new</span> HyperValue(myValue);
+</code></pre>
+				<p>hyper-value can be watched like this:</p>
+				<pre><code class="lang-js"><span class="hljs-comment">// hs - is hyper-scope</span>
+hs.watch(myHyperValue, (newValue, oldValue) =&gt; {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`
+        current value has just been set to: <span class="hljs-subst">${newValue}</span>;
+        old value was: <span class="hljs-subst">${oldValue}</span>;
+    `</span>);
+})
+</code></pre>
+				<h3 id="hyper-scope">hyper-scope</h3>
+				<p>Hyper-scope is a utility entity who owns hyper-value watchers, it can be created manually but it usually should be created for you by a library or framework.</p>
+				<h1 id="api-specification">API Specification</h1>
+				<h3 id="class-hypervalue-">Class HyperValue:</h3>
+				<p>Creating an instance:</p>
+				<pre><code class="lang-js"><span class="hljs-keyword">const</span> hv = <span class="hljs-keyword">new</span> HyperValue(<span class="hljs-number">1</span>);
+</code></pre>
+				<p>The constructor takes only one argument which is the initial value of HyperValue to be created.</p>
+				<p>Each HyperValue has these fields:</p>
+				<ul>
+					<li><code>$</code> property - is an interface to inner value. It&#39;s recommended way to read and write;</li>
+					<li><code>g</code> method - allows to <strong>get</strong> the value inside. It&#39;s not fully stable (it&#39;s likely to be renamed to <code>get</code>), use <code>$</code> when it&#39;s possible. It also takes an optional argument <code>silent</code>, which can be used to avoid <em>recording</em> its owner from adding to dependencies inside <strong>auto</strong> scope and similar ones;</li>
+					<li><code>s</code> method - allows to set the value inside. It&#39;s not fully stable (it&#39;s likely to be renamed to <code>set</code>), use <code>$</code> when it&#39;s possible. It takes only one argument which is the new value;</li>
+				</ul>
+				<h2 id="helpers">Helpers</h2>
+				<h3 id="watch-helpers">Watch helpers</h3>
+				<ul>
+					<li><code>watch</code> - simple calls passed function on each change of hyper-value; returns <code>WatcherId</code> - entity needed to unsubscribe from hyper-value changes;</li>
+					<li><code>unwatch</code> - removes watcher from hyper-value;</li>
+				</ul>
+				<h3 id="auto-helpers">Auto helpers</h3>
+				<p><code>auto</code> - helper takes a function which calculates some value out of some hyper-values and return a new hyper-value equals to calculated expression. Furthermore it remembers all hyper-values used in the function and subscribe to them. Because of that, the returned hyper-value is always relevant.</p>
+				<p>For example:</p>
+				<pre><code class="lang-js"><span class="hljs-keyword">const</span> a = <span class="hljs-keyword">new</span> HyperValue(<span class="hljs-number">2</span>);
+<span class="hljs-keyword">const</span> b = <span class="hljs-keyword">new</span> HyperValue(<span class="hljs-number">2</span>);
+<span class="hljs-keyword">const</span> sum = auto(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> a.$ * b.$);
+
+<span class="hljs-built_in">console</span>.log(sum.$); <span class="hljs-comment">// 4</span>
+
+a.$ = <span class="hljs-number">3</span>;
+<span class="hljs-built_in">console</span>.log(sum.$); <span class="hljs-comment">// 6</span>
+</code></pre>
+				<p><code>bind</code> - is basically the same as <code>auto</code> but it takes an <strong>existing</strong> hyper-value and <strong>updates</strong> its value in the same way;</p>
+				<h3 id="array-helpers">Array helpers</h3>
+				<p>Helpers of this group make work with arrays slightly easier. Most of them operate hyper-value of any array (e. g. <code>const hyperArray = new HyperValue([1, 2, 3])</code>).</p>
+				<h4 id="non-mutable-helpers-">non-mutable helpers:</h4>
+				<ul>
+					<li><code>length</code> - creates a new hyper-value of number which is always equal to the length of passed <em>hyper-array</em>;</li>
+					<li><code>map</code>, <code>filter</code>, <code>every</code>, <code>some</code>, <code>reduce</code>, <code>find</code>, <code>findIndex</code> - are basically the same as Array.* methods but instead of plain value they return hyper-value always synchronized with source array;</li>
+					<li><code>concat</code> - similar <code>Array.concat</code>. It takes 1..∞ hyper-arrays and return a new one which is always equal to concat&#39;ed source one;</li>
+					<li><code>slice</code> - takes 2 or 3 arguments.<ul>
+							<li>1st - is <em>hyper-array</em> to be sliced;</li>
+							<li>2nd - start of a slice (it can be either number or hyper-value of number);</li>
+							<li>3nd - [optional] is the end of slice (it can be either number or hyper-value of number);</li>
+						</ul>
+					</li>
+					<li><code>sort</code> - takes a hyper-array and sorting function (same as <code>Array.sort</code>). In contrast to <code>Array.sort</code> it <strong>does not mutate</strong> the original hyper-array, <strong>it returns a new one</strong>.</li>
+				</ul>
+				<h4 id="mutable-helpers-">mutable helpers:</h4>
+				<ul>
+					<li><code>insert</code> - it takes a <em>hyper-array</em> to be changed, <code>id</code> which must be number (hyper-value of number cannot be passed) and one or array of new elements to insert;</li>
+					<li><code>remove</code> - it takes a <em>hyper-array</em> to be changed, <code>id</code> which must be number (hyper-value of number cannot be passed) and number of elements to be deleted.</li>
+				</ul>
+				<blockquote>
+					<p><strong>Note</strong>: both <code>insert</code> and <code>remove</code> treat Infinity as end of array. So if you need to add something in the end you can write: <code>insert(array, Infinity, newItem)</code>. They also handle negative numbers similarly to <code>Array.slice</code>.</p>
+				</blockquote>
+				<h3 id="other-helpers">Other helpers</h3>
+				<p>The documentation for other helpers is being made and will be updated soon.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_all_.html">"all"</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_core_core_.html">"core/core"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_core_dispatcher_.html">"core/dispatcher"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_core_index_.html">"core/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_core_record_.html">"core/record"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_debug_hv_.html">"debug/hv"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_debug_index_.html">"debug/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_debug_scope_.html">"debug/scope"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_common_.html">"hs/array/common"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_concat_index_.html">"hs/array/concat/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_every_index_.html">"hs/array/every/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_filter_index_.html">"hs/array/filter/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_find_index_.html">"hs/array/find/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_findindex_index_.html">"hs/array/find<wbr>Index/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_index_.html">"hs/array/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_insert_index_.html">"hs/array/insert/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_length_index_.html">"hs/array/length/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_map_index_.html">"hs/array/map/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_reduce_index_.html">"hs/array/reduce/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_remove_index_.html">"hs/array/remove/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_slice_index_.html">"hs/array/slice/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_some_index_.html">"hs/array/some/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_array_sort_index_.html">"hs/array/sort/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_async_index_.html">"hs/async/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_auto_index_.html">"hs/auto/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_bind_index_.html">"hs/bind/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_cast_index_.html">"hs/cast/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_catch_index_.html">"hs/catch/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_index_.html">"hs/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_prop_index_.html">"hs/prop/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_proxy_index_.html">"hs/proxy/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_read_index_.html">"hs/read/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_unwatch_index_.html">"hs/unwatch/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_wait_index_.html">"hs/wait/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_hs_watch_index_.html">"hs/watch/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_index_.html">"index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_scopes_base_.html">"scopes/base"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_scopes_index_.html">"scopes/index"</a>
+					</li>
+					<li class=" tsd-kind-external-module tsd-is-external">
+						<a href="modules/_utils_list_.html">"utils/list"</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="http://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
