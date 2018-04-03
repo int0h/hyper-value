@@ -67,6 +67,7 @@
 				<h1 id="hyper-value">Hyper-value</h1>
 				<p>This is a library designed to help application data management.</p>
 				<p>At this point it is recommended to use with <a href="https://github.com/int0h/hv-jsx">hv-jsx</a> and <a href="https://github.com/int0h/hv-dom">hv-dom</a>. You can find an introduction tutorial here: <a href="https://medium.com/@int0h/hyper-value-living-data-in-your-application-a54aab68d8b1">https://medium.com/@int0h/hyper-value-living-data-in-your-application-a54aab68d8b1</a></p>
+				<p>Docs: <a href="https://int0h.github.io/hyper-value">https://int0h.github.io/hyper-value</a></p>
 				<h1 id="demos">Demos</h1>
 				<p><a href="https://github.com/int0h/hv-counter-app">hv-counter-app</a> — simple counter application</p>
 				<p><a href="https://github.com/int0h/hv-todo-list">hv-todo-list</a> — todo-mvc like application</p>
@@ -104,49 +105,36 @@ hs.watch(myHyperValue, (newValue, oldValue) =&gt; {
 					<li><code>s</code> method - allows to set the value inside. It&#39;s not fully stable (it&#39;s likely to be renamed to <code>set</code>), use <code>$</code> when it&#39;s possible. It takes only one argument which is the new value;</li>
 				</ul>
 				<h2 id="helpers">Helpers</h2>
-				<h3 id="watch-helpers">Watch helpers</h3>
+				<p>Documentation about helpers can be found here:</p>
 				<ul>
-					<li><code>watch</code> - simple calls passed function on each change of hyper-value; returns <code>WatcherId</code> - entity needed to unsubscribe from hyper-value changes;</li>
-					<li><code>unwatch</code> - removes watcher from hyper-value;</li>
-				</ul>
-				<h3 id="auto-helpers">Auto helpers</h3>
-				<p><code>auto</code> - helper takes a function which calculates some value out of some hyper-values and return a new hyper-value equals to calculated expression. Furthermore it remembers all hyper-values used in the function and subscribe to them. Because of that, the returned hyper-value is always relevant.</p>
-				<p>For example:</p>
-				<pre><code class="lang-js"><span class="hljs-keyword">const</span> a = <span class="hljs-keyword">new</span> HyperValue(<span class="hljs-number">2</span>);
-<span class="hljs-keyword">const</span> b = <span class="hljs-keyword">new</span> HyperValue(<span class="hljs-number">2</span>);
-<span class="hljs-keyword">const</span> sum = auto(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> a.$ * b.$);
-
-<span class="hljs-built_in">console</span>.log(sum.$); <span class="hljs-comment">// 4</span>
-
-a.$ = <span class="hljs-number">3</span>;
-<span class="hljs-built_in">console</span>.log(sum.$); <span class="hljs-comment">// 6</span>
-</code></pre>
-				<p><code>bind</code> - is basically the same as <code>auto</code> but it takes an <strong>existing</strong> hyper-value and <strong>updates</strong> its value in the same way;</p>
-				<h3 id="array-helpers">Array helpers</h3>
-				<p>Helpers of this group make work with arrays slightly easier. Most of them operate hyper-value of any array (e. g. <code>const hyperArray = new HyperValue([1, 2, 3])</code>).</p>
-				<h4 id="non-mutable-helpers-">non-mutable helpers:</h4>
-				<ul>
-					<li><code>length</code> - creates a new hyper-value of number which is always equal to the length of passed <em>hyper-array</em>;</li>
-					<li><code>map</code>, <code>filter</code>, <code>every</code>, <code>some</code>, <code>reduce</code>, <code>find</code>, <code>findIndex</code> - are basically the same as Array.* methods but instead of plain value they return hyper-value always synchronized with source array;</li>
-					<li><code>concat</code> - similar <code>Array.concat</code>. It takes 1..∞ hyper-arrays and return a new one which is always equal to concat&#39;ed source one;</li>
-					<li><code>slice</code> - takes 2 or 3 arguments.<ul>
-							<li>1st - is <em>hyper-array</em> to be sliced;</li>
-							<li>2nd - start of a slice (it can be either number or hyper-value of number);</li>
-							<li>3nd - [optional] is the end of slice (it can be either number or hyper-value of number);</li>
+					<li><a href="https://int0h.github.io/hyper-value/modules/_hs_async_index_.html">async helper</a></li>
+					<li><a href="https://int0h.github.io/hyper-value/modules/_hs_auto_index_.html">auto helper</a></li>
+					<li><a href="https://int0h.github.io/hyper-value/modules/_hs_bind_index_.html">bind helper</a></li>
+					<li><a href="https://int0h.github.io/hyper-value/modules/_hs_cast_index_.html">cast helper</a></li>
+					<li><a href="https://int0h.github.io/hyper-value/modules/_hs_catch_index_.html">catch helper</a></li>
+					<li><a href="https://int0h.github.io/hyper-value/modules/_hs_prop_index_.html">prop helper</a></li>
+					<li><a href="https://int0h.github.io/hyper-value/modules/_hs_proxy_index_.html">proxy helper</a></li>
+					<li><a href="https://int0h.github.io/hyper-value/modules/_hs_read_index_.html">read helper</a></li>
+					<li><a href="https://int0h.github.io/hyper-value/modules/_hs_unwatch_index_.html">unwatch helper</a></li>
+					<li><a href="https://int0h.github.io/hyper-value/modules/_hs_wait_index_.html">wait helper</a></li>
+					<li><a href="https://int0h.github.io/hyper-value/modules/_hs_watch_index_.html">watch helper</a></li>
+					<li>array helpers:<ul>
+							<li><a href="https://int0h.github.io/hyper-value/modules/_hs_array_concat_index_.html">concat helper</a></li>
+							<li><a href="https://int0h.github.io/hyper-value/modules/_hs_array_every_index_.html">every helper</a></li>
+							<li><a href="https://int0h.github.io/hyper-value/modules/_hs_array_filter_index_.html">filter helper</a></li>
+							<li><a href="https://int0h.github.io/hyper-value/modules/_hs_array_find_index_.html">find helper</a></li>
+							<li><a href="https://int0h.github.io/hyper-value/modules/_hs_array_findindex_index_.html">findIndex helper</a></li>
+							<li><a href="https://int0h.github.io/hyper-value/modules/_hs_array_insert_index_.html">insert helper</a></li>
+							<li><a href="https://int0h.github.io/hyper-value/modules/_hs_array_length_index_.html">length helper</a></li>
+							<li><a href="https://int0h.github.io/hyper-value/modules/_hs_array_map_index_.html">map helper</a></li>
+							<li><a href="https://int0h.github.io/hyper-value/modules/_hs_array_reduce_index_.html">reduce helper</a></li>
+							<li><a href="https://int0h.github.io/hyper-value/modules/_hs_array_remove_index_.html">remove helper</a></li>
+							<li><a href="https://int0h.github.io/hyper-value/modules/_hs_array_slice_index_.html">slice helper</a></li>
+							<li><a href="https://int0h.github.io/hyper-value/modules/_hs_array_some_index_.html">some helper</a></li>
+							<li><a href="https://int0h.github.io/hyper-value/modules/_hs_array_sort_index_.html">sort helper</a></li>
 						</ul>
 					</li>
-					<li><code>sort</code> - takes a hyper-array and sorting function (same as <code>Array.sort</code>). In contrast to <code>Array.sort</code> it <strong>does not mutate</strong> the original hyper-array, <strong>it returns a new one</strong>.</li>
 				</ul>
-				<h4 id="mutable-helpers-">mutable helpers:</h4>
-				<ul>
-					<li><code>insert</code> - it takes a <em>hyper-array</em> to be changed, <code>id</code> which must be number (hyper-value of number cannot be passed) and one or array of new elements to insert;</li>
-					<li><code>remove</code> - it takes a <em>hyper-array</em> to be changed, <code>id</code> which must be number (hyper-value of number cannot be passed) and number of elements to be deleted.</li>
-				</ul>
-				<blockquote>
-					<p><strong>Note</strong>: both <code>insert</code> and <code>remove</code> treat Infinity as end of array. So if you need to add something in the end you can write: <code>insert(array, Infinity, newItem)</code>. They also handle negative numbers similarly to <code>Array.slice</code>.</p>
-				</blockquote>
-				<h3 id="other-helpers">Other helpers</h3>
-				<p>The documentation for other helpers is being made and will be updated soon.</p>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
