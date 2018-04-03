@@ -3,5 +3,7 @@ dist
 types
 .nyc_output
 coverage
+# built:
 *.js
 *.d.ts
+!docs/**
