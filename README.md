@@ -1,5 +1,7 @@
 # Hyper-value
 
+[![Build Status](https://api.travis-ci.org/int0h/hyper-value.svg?branch=master)](https://travis-ci.org/int0h/hyper-value)
+
 This is a library designed to help application data management.
 
 At this point it is recommended to use with [hv-jsx](https://github.com/int0h/hv-jsx) and [hv-dom](https://github.com/int0h/hv-dom). You can find an introduction tutorial here: https://medium.com/@int0h/hyper-value-living-data-in-your-application-a54aab68d8b1
