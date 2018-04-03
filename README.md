@@ -1,6 +1,7 @@
 # Hyper-value
 
 [![Build Status](https://api.travis-ci.org/int0h/hyper-value.svg?branch=master)](https://travis-ci.org/int0h/hyper-value)
+[![Coverage Status](https://coveralls.io/repos/github/int0h/hyper-value/badge.svg?branch=master)](https://coveralls.io/github/int0h/hyper-value?branch=master)
 
 This is a library designed to help application data management.
 
