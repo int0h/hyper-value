@@ -12,3 +12,4 @@ export {read} from './read';
 export {unwatch} from './unwatch';
 export {wait} from './wait';
 export {watch} from './watch';
+export {hv} from './hv';

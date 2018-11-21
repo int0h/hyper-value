@@ -14,7 +14,7 @@ export type Matcher<T, V extends T> = V | ((value: T) => boolean | void);
 
 function matchWaiter<T, V extends T>(matcher: Matcher<T, V>, value: T): boolean {
     if (typeof matcher === 'function') {
-        if (matcher(value)) {
+        if ((matcher as any)(value)) {
             return true;
         }
         return false;

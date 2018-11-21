@@ -15,13 +15,14 @@
         "lib": [
             "es6"
         ],
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
+        // "noUnusedLocals": true,
+        // "noUnusedParameters": true,
         "experimentalDecorators": true
     },
     "include": [
         "./src/all.ts",
         "./src/index.ts",
-        "./src/hs/**/index.ts"
+        "./src/hs/**/index.ts",
+        "./src/hs/test.ts"
     ]
 }

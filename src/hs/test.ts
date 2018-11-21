@@ -10,3 +10,4 @@ import './read/test';
 import './unwatch/test';
 import './wait/test';
 import './watch/test';
+import './hv/test';

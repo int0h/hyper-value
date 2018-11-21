@@ -2,7 +2,7 @@
   "name": "hyper-value",
   "version": "0.2.0",
   "description": "",
-  "main": "./dist/index.js",
+  "main": "./index.js",
   "repository": "",
   "author": "int0h <int0h@yandex.ru>",
   "license": "MIT",
@@ -17,7 +17,7 @@
     "ts-node": "^5.0.1",
     "tslint": "^5.7.0",
     "typedoc": "^0.11.1",
-    "typescript": "^2.5.3",
+    "typescript": "^3.1.4",
     "weak": "^1.0.1"
   },
   "keywords": [],
